@@ -9,7 +9,7 @@ use GuzzleHttp\Exception\ClientException; // 400 level errors
 
 class MonzoAuth
 {
-    public function generateAuthUrl()
+    public function generateAuthUrl(string $url)
     {
         $state = Str::random(64);
 
@@ -19,7 +19,7 @@ class MonzoAuth
         $urlString = 'https://auth.monzo.com/';
         $urlParams = [
             'client_id' => env('MONZO_CLIENT_ID'),
-            'redirect_uri' => env('MONZO_REDIRECT_URI'),
+            'redirect_uri' => $url,
             'response_type' => 'code',
             'state' => $state
         ];
@@ -28,7 +28,7 @@ class MonzoAuth
     }
 
     // todo - throw exceptions? - much more error handling
-    public function getCredentialsFromCallback(string $state, string $code)
+    public function getCredentialsFromCallback(string $state, string $code, string $url)
     {
         if (!Cache::has($state)) {
             die('Session Expired'); // send message to flash
@@ -38,7 +38,7 @@ class MonzoAuth
             'grant_type' => 'authorization_code',
             'client_id' => env('MONZO_CLIENT_ID'),
             'client_secret' => env('MONZO_CLIENT_SECRET'),
-            'redirect_uri' => env('MONZO_REDIRECT_URI'),
+            'redirect_uri' => $url,
             'code' => $code
         ];
 

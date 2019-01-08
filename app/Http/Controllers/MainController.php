@@ -10,9 +10,9 @@ class MainController extends Controller
 {
     private $monzoAuth;
 
-    public function __construct(MonzoAuth $monzoAuth)
+    public function __construct( $monzoAuth)
     {
-        $this->monzoAuth = $monzoAuth;
+        $this->monzoAuth = new MonzoAuth(route('callback'));
     }
 
     public function home()
@@ -22,12 +22,12 @@ class MainController extends Controller
 
     public function beginAuth()
     {
-        return redirect($this->monzoAuth->generateAuthUrl());
+        return redirect($this->monzoAuth->generateAuthUrl(route('callback')));
     }
 
     public function callback(Request $request)
     {
-        $credentials = $this->monzoAuth->getCredentialsFromCallback($request->query('state'), $request->query('code'));
+        $credentials = $this->monzoAuth->getCredentialsFromCallback($request->query('state'), $request->query('code'), route('callback'));
 
         $request->session()->put('monzo_auth', $credentials);
 
