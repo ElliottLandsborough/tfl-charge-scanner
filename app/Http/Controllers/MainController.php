@@ -6,30 +6,44 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Cache;
+use GuzzleHttp\Exception\ClientException; // 400 level errors
 
 class MainController extends Controller
 {
-    public function home(Request $request)
+    public function home()
     {
-        if (!$request->session()->has('monzo_state')) {
-            $request->session()->put('monzo_state', Str::random(64));
-        }
+        return view('pages.home', ['url' => url('/auth')]);
+    }
+
+    public function beginAuth()
+    {
+        $state = Str::random(64);
+
+        $expiresAt = now()->addHours(1);
+        Cache::put($state, 'true', $expiresAt);
+
         $urlString = 'https://auth.monzo.com/';
         $urlParams = [
             'client_id' => env('MONZO_CLIENT_ID'),
             'redirect_uri' => env('MONZO_REDIRECT_URI'),
             'response_type' => 'code',
-            'state' => $request->session()->get('monzo_state')
+            'state' => $state
         ];
 
         $url = $urlString . '?' . http_build_query($urlParams);
 
+        return redirect($url);
+    }
+
+    public function callback(Request $request)
+    {
         if (isset($_GET['code']) && isset($_GET['state'])) {
             $code = $_GET['code'];
             $state = $_GET['state'];
 
-            if ($state != $request->session()->get('monzo_state')) {
-                die('Incorrect State');
+            if (!Cache::has($state)) {
+                die('Session Expired');
             }
 
             $form_params = [
@@ -40,9 +54,15 @@ class MainController extends Controller
                 'code' => $code
             ];
 
-            $response = (new client())->request('POST', 'https://api.monzo.com/oauth2/token', [
-                'form_params' => $form_params
-            ]);
+            $client = new Client();
+
+            try {
+                $response = $client->request('POST', 'https://api.monzo.com/oauth2/token', [
+                    'form_params' => $form_params
+                ]);
+            } catch (ClientException $e) {
+                die($e->getMessage()); // 400 level errors
+            }
 
             $body = $response->getBody();
 
@@ -50,11 +70,31 @@ class MainController extends Controller
 
             $auth = json_decode($stringBody);
 
-            $auth->time = time();
+            $auth->created_at = time();
 
             $request->session()->put('monzo_auth', $auth);
         }
 
+        return redirect('/');
+    }
+
+    public function credentials(Request $request)
+    {
+        $array = [];
+
+        if ($request->session()->has('monzo_auth')) {
+            $array = $request->session()->get('monzo_auth');
+        }
+
+        return response()->json($array);
+    }
+
+    public function refresh()
+    {
+        // refresh the creds if they expire?
+    }
+
+    public function totals() {
         // auth exists, try to do an api request
         if ($request->session()->has('monzo_auth')) {
             $monzo_auth = $request->session()->get('monzo_auth');
@@ -114,6 +154,6 @@ class MainController extends Controller
             die;
         }
 
-        return view('pages.home', ['url' => $url]);
+
     }
 }
