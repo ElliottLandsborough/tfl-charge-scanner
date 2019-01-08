@@ -15,4 +15,4 @@ Route::get('/', 'MainController@home');
 Route::get('/auth', 'MainController@beginAuth');
 Route::get('/callback', 'MainController@callback');
 Route::get('/credentials', 'MainController@credentials');
-Route::get('/refresh', 'MainController@refresh');
+// Route::get('/refresh', 'MainController@refresh'); ?
