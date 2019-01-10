@@ -10,8 +10,8 @@ class Example extends React.Component {
     this.state = {
       monzoApi: 'https://api.monzo.com',
       error: null,
-      isLoaded: false,
-      items: false,
+      isAuthorized: false,
+      items: [],
       accounts: [],
       accountId: false,
       transactions: []
@@ -23,24 +23,30 @@ class Example extends React.Component {
       .then(res => res.json())
       .then(
         (result) => {
-          this.setState({
-            isLoaded: true,
-            items: result.items
-          });
+          const howManyItems = Object.keys(result.items).length;
+          if (howManyItems) {
+            this.setState({
+                isAuthorized: true,
+                items: result.items
+            });
+          }
+          return howManyItems;
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
         // exceptions from actual bugs in components.
         (error) => {
           this.setState({
-            isLoaded: true,
             error
           });
         }
       )
       .then(
-        () => {
-          this.fetchAccountId();
+        (howManyItems) => {
+          console.log(howManyItems);
+          if (howManyItems) {
+            this.fetchAccountId();
+          }
         }
       )
   }
@@ -153,11 +159,11 @@ class Example extends React.Component {
 
 
   render() {
-    const { error, isLoaded, items, transactions } = this.state;
+    const { error, isAuthorized, items, transactions } = this.state;
 
     if (error) {
       return <div>Error: {error.message}</div>;
-    } else if (!isLoaded || !items) {
+    } else if (!isAuthorized) {
       return <a className='navbar-brand' href='/auth'>Authorize with monzo</a>;
     } else {
       console.log(transactions)
