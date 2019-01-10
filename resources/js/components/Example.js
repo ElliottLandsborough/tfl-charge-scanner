@@ -210,10 +210,10 @@ class Example extends React.Component {
     for (var key in travelTotals) {
         if (travelTotals.hasOwnProperty(key)) {
             if (key.includes('Avg') || key.includes('Total')) {
-                string += '<p><b>' + key + ': ' + travelTotals[key] + '</b></p>';
+                string += '<p><b>' + key + ': £' + travelTotals[key] + '</b></p>';
             } else {
                 for (var month in travelTotals[key]) {
-                    string += '<p>' + key + '-' + month + ': ' + travelTotals[key][month] + '</p>';
+                    string += '<p>' + key + '-' + month + ': £' + travelTotals[key][month] + '</p>';
                 }
             }
         }
