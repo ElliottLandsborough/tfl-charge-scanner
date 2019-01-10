@@ -201,6 +201,27 @@ class Example extends React.Component {
     this.setState({ travelTotals: travelTotals });
   }
 
+  renderTotals() {
+    const { travelTotals } = this.state;
+
+    let string = '';
+    let months = '';
+
+    for (var key in travelTotals) {
+        if (travelTotals.hasOwnProperty(key)) {
+            if (key.includes('Avg') || key.includes('Total')) {
+                string += '<p><b>' + key + ': ' + travelTotals[key] + '</b></p>';
+            } else {
+                for (var month in travelTotals[key]) {
+                    string += '<p>' + key + '-' + month + ': ' + travelTotals[key][month] + '</p>';
+                }
+            }
+        }
+    }
+
+    return string;
+  }
+
   render() {
     const { error, isAuthorized, items, travelTotals } = this.state;
 
@@ -209,9 +230,8 @@ class Example extends React.Component {
     } else if (!isAuthorized) {
       return <a className='navbar-brand' href='/auth'>Authorize with monzo</a>;
     } else {
-      console.log(travelTotals)
       return (
-        <div className='lol'>lol2</div>
+        <div className='totals' dangerouslySetInnerHTML={{__html: this.renderTotals()}}></div>
       );
     }
   }
