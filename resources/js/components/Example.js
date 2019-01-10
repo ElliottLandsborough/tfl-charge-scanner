@@ -15,7 +15,8 @@ class Example extends React.Component {
       accounts: [],
       accountId: false,
       transactions: [],
-      transactionsForTravel: []
+      transactionsForTravel: [],
+      travelTotals: []
     };
   }
 
@@ -44,7 +45,6 @@ class Example extends React.Component {
       )
       .then(
         (howManyItems) => {
-          console.log(howManyItems);
           if (howManyItems) {
             this.fetchAccountId();
           }
@@ -136,7 +136,7 @@ class Example extends React.Component {
   populateTransactions() {
     let self = this;
 
-    var transactionsLoop = async function () {
+    let transactionsLoop = async function () {
       let continueLoop = true;
       let lastDate = false;
       while (continueLoop) {
@@ -154,6 +154,8 @@ class Example extends React.Component {
             }
         });
 
+        self.travelTotals();
+
         lastDate = transactions[transactions.length-1].created;
 
         if (transactions.length < 100) {
@@ -165,17 +167,49 @@ class Example extends React.Component {
     transactionsLoop();
   }
 
+  travelTotals() {
+    let travelTotals = {};
+    let self = this;
 
+    this.state.transactionsForTravel.forEach(function(transaction) {
+      const amount = transaction.amount; // invert the amount
+      const month = transaction.created.substr(5,2);
+      const year = transaction.created.substr(0,4);
+
+      if (typeof travelTotals[year + 'Avg'] == "undefined") travelTotals[year + 'Avg'] = 0;
+      if (typeof travelTotals[year + 'Total'] == "undefined") travelTotals[year + 'Total'] = 0;
+      if (typeof travelTotals[year] == "undefined") travelTotals[year] = {};
+      if (typeof travelTotals[year][month] == "undefined") travelTotals[year][month] = 0;
+
+      travelTotals[year][month] += amount;
+      travelTotals[year + 'Total'] += amount;
+      travelTotals[year + 'Avg'] += Math.round(amount / 12);
+    });
+
+    for (var key in travelTotals) {
+        if (travelTotals.hasOwnProperty(key)) {
+            if (key.includes('Avg') || key.includes('Total')) {
+                travelTotals[key] = travelTotals[key] * -1 / 100;
+            } else {
+                for (var month in travelTotals[key]) {
+                    travelTotals[key][month] = travelTotals[key][month] * -1 / 100;
+                }
+            }
+        }
+    }
+
+    this.setState({ travelTotals: travelTotals });
+  }
 
   render() {
-    const { error, isAuthorized, items, transactionsForTravel } = this.state;
+    const { error, isAuthorized, items, travelTotals } = this.state;
 
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isAuthorized) {
       return <a className='navbar-brand' href='/auth'>Authorize with monzo</a>;
     } else {
-      console.log(transactionsForTravel)
+      console.log(travelTotals)
       return (
         <div className='lol'>lol2</div>
       );
