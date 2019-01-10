@@ -14,7 +14,8 @@ class Example extends React.Component {
       items: [],
       accounts: [],
       accountId: false,
-      transactions: []
+      transactions: [],
+      transactionsForTravel: []
     };
   }
 
@@ -143,7 +144,15 @@ class Example extends React.Component {
         const json = await response.json();
         const transactions = json.transactions
 
-        self.setState({ transactions: [...self.state.transactions, ...transactions ] });
+        // no need to store all transactions at the moment
+        //self.setState({ transactions: [...self.state.transactions, ...transactions ] });
+
+        // so just get transport ones
+        transactions.forEach(function(transaction) {
+            if (transaction.category == 'transport' && transaction.description.toLowerCase().includes('tfl.gov.uk')) {
+                self.setState({ transactionsForTravel: [...self.state.transactionsForTravel, ...[transaction] ] });
+            }
+        });
 
         lastDate = transactions[transactions.length-1].created;
 
@@ -159,14 +168,14 @@ class Example extends React.Component {
 
 
   render() {
-    const { error, isAuthorized, items, transactions } = this.state;
+    const { error, isAuthorized, items, transactionsForTravel } = this.state;
 
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isAuthorized) {
       return <a className='navbar-brand' href='/auth'>Authorize with monzo</a>;
     } else {
-      console.log(transactions)
+      console.log(transactionsForTravel)
       return (
         <div className='lol'>lol2</div>
       );
