@@ -4,7 +4,11 @@
     @include('includes.head')
 </head>
 <body>
-<div class="container">
+    <div id="app"></div>
+    <script src="{{ asset('js/app.js') }}"></script>
+</body>
+</html>
+<!--<div class="container">
 
     <header class="row">
         @include('includes.header')
@@ -20,6 +24,4 @@
         @include('includes.footer')
     </footer>
 
-</div>
-</body>
-</html>
+</div>-->

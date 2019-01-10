@@ -1,4 +1,4 @@
 @extends('layouts.default')
 @section('content')
-    <a href="{{ $url }}">{{ $url }}</a>
+    <a href="{{ $url }}">Authorize with Monzo</a>
 @stop

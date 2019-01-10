@@ -10,7 +10,7 @@ class MainController extends Controller
 {
     private $monzoAuth;
 
-    public function __construct( $monzoAuth)
+    public function __construct()
     {
         $this->monzoAuth = new MonzoAuth(route('callback'));
     }
@@ -20,7 +20,7 @@ class MainController extends Controller
         return view('pages.home', ['url' => url('/auth')]);
     }
 
-    public function beginAuth()
+    public function authUrl()
     {
         return redirect($this->monzoAuth->generateAuthUrl(route('callback')));
     }
@@ -36,10 +36,10 @@ class MainController extends Controller
 
     public function credentials(Request $request)
     {
-        $array = [];
+        $array = ['items' => []];
 
         if ($request->session()->has('monzo_auth')) {
-            $array = $request->session()->get('monzo_auth');
+            $array['items'] = $request->session()->get('monzo_auth');
         }
 
         return response()->json($array);

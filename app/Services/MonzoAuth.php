@@ -50,7 +50,6 @@ class MonzoAuth
             ]);
 
             Cache::forget($state); // token has been used, force expiration of local state
-
         } catch (ClientException $e) {
             die($e->getMessage()); // send message to flash - 400
         }
@@ -68,41 +67,7 @@ class MonzoAuth
 
 
     // unused right now:
-    public function totals() {
-        // auth exists, try to do an api request
-        if ($request->session()->has('monzo_auth')) {
-            $monzo_auth = $request->session()->get('monzo_auth');
-
-            $response = (new client())->request('GET', 'https://api.monzo.com/accounts', [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $monzo_auth->access_token
-                ]
-            ]);
-
-            $body = $response->getBody();
-
-            $stringBody = (string) $body;
-
-            $response = json_decode($stringBody);
-
-            foreach ($response->accounts as $account) {
-                if ($account->type == 'uk_retail') {
-                    $account_id = $account->id;
-                }
-            }
-
-            $response = (new client())->request('GET', "https://api.monzo.com/transactions?account_id=$account_id", [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $monzo_auth->access_token
-                ]
-            ]);
-
-            $body = $response->getBody();
-
-            $stringBody = (string) $body;
-
-            $response = json_decode($stringBody);
-
+    /*
             $transactions = [];
 
             foreach ($response->transactions as $transaction) {
@@ -124,11 +89,5 @@ class MonzoAuth
             }
 
             print_r($transactions);
-
-            die;
-        }
-
-
-    }
-
+    */
 }
