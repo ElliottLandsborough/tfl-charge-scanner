@@ -64,30 +64,4 @@ class MonzoAuth
 
         return $auth;
     }
-
-
-    // unused right now:
-    /*
-            $transactions = [];
-
-            foreach ($response->transactions as $transaction) {
-                // detect tfl
-                if (isset($transaction->metadata->notes) && strpos(strtolower($transaction->metadata->notes), 'travel charge for') !== false) {
-
-                    $year = substr($transaction->created, 0, 4);
-                    $month = substr($transaction->created, 5, 2);
-
-                    if (!isset($transactions[$year])) $transactions[$year] = [];
-                    if (!isset($transactions[$year . ' average'])) $transactions[$year . ' average'] = 0;
-                    if (!isset($transactions[$year . ' total'])) $transactions[$year . ' total'] = 0;
-                    if (!isset($transactions[$year][$month])) $transactions[$year][$month] = 0;
-
-                    $transactions[$year . ' average'] += ($transaction->amount / 100 / 12 * -1);
-                    $transactions[$year . ' total'] += ($transaction->amount / 100 * -1);
-                    $transactions[$year][$month] += ($transaction->amount / 100 * -1);
-                }
-            }
-
-            print_r($transactions);
-    */
 }
