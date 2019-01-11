@@ -1,10 +1,11 @@
 // resources/assets/js/components/Example.js
 
-import React from 'react'
+import React, {Component} from 'react';
 import { Link } from 'react-router-dom'
 import moment from 'moment'
+import MonthAmount from './MonthAmount'
 
-class Example extends React.Component {
+class Example extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -16,7 +17,9 @@ class Example extends React.Component {
       accountId: false,
       transactions: [],
       transactionsForTravel: [],
-      travelTotals: []
+      yearAverages: [],
+      yearTotals: [],
+      yearMonths: []
     };
   }
 
@@ -73,7 +76,6 @@ class Example extends React.Component {
           });
         },
         (error) => {
-          console.log(error);
           this.setState({
             error
           });
@@ -180,37 +182,34 @@ class Example extends React.Component {
   }
 
   travelTotals() {
-    let travelTotals = {};
-    let self = this;
+    let yearAverages = [];
+    let yearTotals = [];
+    let yearMonths = [];
 
     this.state.transactionsForTravel.forEach(function(transaction) {
       const amount = transaction.amount;
       const month = transaction.created.substr(5,2);
       const year = transaction.created.substr(0,4);
 
-      if (typeof travelTotals[year + 'Avg'] == "undefined") travelTotals[year + 'Avg'] = 0;
-      if (typeof travelTotals[year + 'Total'] == "undefined") travelTotals[year + 'Total'] = 0;
-      if (typeof travelTotals[year] == "undefined") travelTotals[year] = {};
-      if (typeof travelTotals[year][month] == "undefined") travelTotals[year][month] = 0;
+      if (typeof yearTotals[year] == "undefined") yearTotals[year] = 0;
+      yearTotals[year] += amount;
 
-      travelTotals[year][month] += amount;
-      travelTotals[year + 'Total'] += amount;
-      travelTotals[year + 'Avg'] += Math.round(amount / 12);
+      if (typeof yearAverages[year] == "undefined") yearAverages[year] = 0;
+      yearAverages[year] += Math.round(amount / 12);
+
+      if (typeof yearMonths['' + year + month] == "undefined") yearMonths['' + year + month] = 0;
+      yearMonths['' + year + month] += amount;
     });
 
-    for (var key in travelTotals) {
-        if (travelTotals.hasOwnProperty(key)) {
-            if (key.includes('Avg') || key.includes('Total')) {
-                travelTotals[key] = travelTotals[key] * -1 / 100;
-            } else {
-                for (var month in travelTotals[key]) {
-                    travelTotals[key][month] = travelTotals[key][month] * -1 / 100;
-                }
-            }
-        }
-    }
+    this.setState({
+        yearAverages: yearAverages,
+        yearTotals: yearTotals,
+        yearMonths: yearMonths
+    });
+  }
 
-    this.setState({ travelTotals: travelTotals });
+  travelTotalPositiveInteger(integer) {
+    return integer * -1 / 100;
   }
 
   // todo, make this into its own component.
@@ -243,9 +242,15 @@ class Example extends React.Component {
     } else if (!isAuthorized) {
       return <a className='navbar-brand' href='/auth'>Authorize with monzo</a>;
     } else {
-      return (
-        <div className='totals' dangerouslySetInnerHTML={{__html: this.renderTotals()}}></div>
+      const monthAmounts = this.state.yearMonths.map((amount, key) =>
+        <MonthAmount key={key} yearMonth={key} amount={this.travelTotalPositiveInteger(amount)} />
       );
+
+      return (
+        <div>
+          {monthAmounts}
+        </div>
+      )
     }
   }
 }
