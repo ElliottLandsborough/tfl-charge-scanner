@@ -22,12 +22,12 @@ class MainController extends Controller
 
     public function authUrl()
     {
-        return redirect($this->monzoAuth->generateAuthUrl(route('callback')));
+        return redirect($this->monzoAuth->generateAuthUrl());
     }
 
     public function callback(Request $request)
     {
-        $credentials = $this->monzoAuth->getCredentialsFromCallback($request->query('state'), $request->query('code'), route('callback'));
+        $credentials = $this->monzoAuth->setCredentialsFromCallback($request->query('state'), $request->query('code'))->getCredentials();
 
         $request->session()->put('monzo_auth', $credentials);
 
@@ -36,10 +36,18 @@ class MainController extends Controller
 
     public function credentials(Request $request)
     {
-        $array = ['items' => []];
+        $array = [];
 
         if ($request->session()->has('monzo_auth')) {
-            $array['items'] = $request->session()->get('monzo_auth');
+            $credentials = $this->monzoAuth->checkExpires($request->session()->get('monzo_auth'))->getCredentials();
+
+            if ((array) $credentials != (array) $request->session()->get('monzo_auth')) {
+                $request->session()->put('monzo_auth', $credentials);
+            }
+        }
+
+        if (isset($credentials->access_token)) {
+            $array['access_token'] = $credentials->access_token;
         }
 
         return response()->json($array);

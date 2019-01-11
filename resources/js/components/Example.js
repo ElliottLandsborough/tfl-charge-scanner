@@ -11,7 +11,7 @@ class Example extends React.Component {
       monzoApi: 'https://api.monzo.com',
       error: null,
       isAuthorized: false,
-      items: [],
+      accessToken: false,
       accounts: [],
       accountId: false,
       transactions: [],
@@ -25,11 +25,11 @@ class Example extends React.Component {
       .then(res => res.json())
       .then(
         (result) => {
-          const howManyItems = Object.keys(result.items).length;
+          const howManyItems = Object.keys(result).length;
           if (howManyItems) {
             this.setState({
                 isAuthorized: true,
-                items: result.items
+                accessToken: result.access_token
             });
           }
           return howManyItems;
@@ -53,9 +53,18 @@ class Example extends React.Component {
   }
 
   fetchAccountId() {
-    const { items, monzoApi } = this.state;
-
+    const { monzoApi } = this.state;
+    let self = this;
     fetch(monzoApi + '/accounts', this.authParams())
+      .then(function(response) {
+        if(response.status !== 200) {
+          self.setState({
+            isAuthorized: false,
+            accessToken: false
+          });
+        }
+        return response;
+      })
       .then(res => res.json())
       .then(
         (result) => {
@@ -64,6 +73,7 @@ class Example extends React.Component {
           });
         },
         (error) => {
+          console.log(error);
           this.setState({
             error
           });
@@ -106,11 +116,11 @@ class Example extends React.Component {
   }
 
   authParams() {
-    const { items } = this.state;
+    const { accessToken } = this.state;
     return {
       method: 'GET',
       headers: {
-        'Authorization': 'Bearer ' + items.access_token
+        'Authorization': 'Bearer ' + accessToken
       }
     }
   }
@@ -123,7 +133,7 @@ class Example extends React.Component {
     }
 
     let params = {
-      'expand[]': 'merchant',
+      // 'expand[]': 'merchant', // this may slow it down?
       'limit': 100,
       'account_id': accountId,
       'since': since,
@@ -133,9 +143,11 @@ class Example extends React.Component {
   }
 
   // this is a bit weird because we have to call the api once at a time...
+  // maybe do it by month instead?
   populateTransactions() {
     let self = this;
-
+    // TODO: handle the 401 here, probably clear the credentials
+    // and set the state back to isAuthorized: false, clear the old creds
     let transactionsLoop = async function () {
       let continueLoop = true;
       let lastDate = false;
@@ -172,7 +184,7 @@ class Example extends React.Component {
     let self = this;
 
     this.state.transactionsForTravel.forEach(function(transaction) {
-      const amount = transaction.amount; // invert the amount
+      const amount = transaction.amount;
       const month = transaction.created.substr(5,2);
       const year = transaction.created.substr(0,4);
 
@@ -201,6 +213,7 @@ class Example extends React.Component {
     this.setState({ travelTotals: travelTotals });
   }
 
+  // todo, make this into its own component.
   renderTotals() {
     const { travelTotals } = this.state;
 
