@@ -82552,7 +82552,7 @@ function (_Component) {
           accountId = _this$state.accountId;
 
       if (!since) {
-        since = moment__WEBPACK_IMPORTED_MODULE_3___default()().subtract(13, 'months').format('Y-MM') + '-01T00:00:00Z';
+        since = moment__WEBPACK_IMPORTED_MODULE_3___default()().subtract(12, 'months').format('Y-MM') + '-01T00:00:00Z';
       }
 
       var params = {
@@ -82713,7 +82713,9 @@ function (_Component) {
             amount: _this4.travelTotalPositiveInteger(amount)
           });
         });
-        return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, monthAmounts);
+        return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+          className: "month-amounts"
+        }, monthAmounts);
       }
     }
   }]);
@@ -82767,6 +82769,8 @@ var Header = function Header() {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -82787,6 +82791,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var MonthAmount =
 /*#__PURE__*/
 function (_Component) {
@@ -82801,7 +82806,11 @@ function (_Component) {
   _createClass(MonthAmount, [{
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, this.props.yearMonth, ": \xA3", this.props.amount));
+      var parsedDate = this.props.yearMonth.toString().substr(0, 4) + '-' + this.props.yearMonth.toString().substr(4, 2) + "-01";
+      var date = moment__WEBPACK_IMPORTED_MODULE_1___default()(parsedDate).format('MMM Y');
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "month-amount"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "\xA3", this.props.amount.toFixed(2), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, date)));
     }
   }]);
 

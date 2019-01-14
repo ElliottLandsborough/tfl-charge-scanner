@@ -10495,3 +10495,37 @@ a.text-dark:focus {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
+.month-amounts {
+  text-align: center;
+}
+
+.month-amounts .month-amount {
+  border-radius: 3px;
+  display: inline-block;
+  text-align: center;
+  margin: 10px 5px 0;
+  border: 1px solid #000;
+}
+
+.month-amounts .month-amount p {
+  position: relative;
+  display: inline-block;
+  padding: 20px 0 50px 0;
+  min-width: 100px;
+  margin: 0;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.month-amounts .month-amount p span {
+  background: #ddd;
+  display: block;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  font-weight: normal;
+  font-size: 15px;
+}
+

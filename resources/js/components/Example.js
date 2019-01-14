@@ -131,7 +131,7 @@ class Example extends Component {
     const { monzoApi, accountId } = this.state;
 
     if (!since) {
-      since = moment().subtract(13, 'months').format('Y-MM') + '-01T00:00:00Z';
+      since = moment().subtract(12, 'months').format('Y-MM') + '-01T00:00:00Z';
     }
 
     let params = {
@@ -247,7 +247,7 @@ class Example extends Component {
       );
 
       return (
-        <div>
+        <div className='month-amounts'>
           {monthAmounts}
         </div>
       )
