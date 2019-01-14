@@ -77,12 +77,22 @@ class TflAmount extends Component {
     return amount;
   }
 
+  calculateCommuterClub(yearlyAmount)
+  {
+    // REPRESENTATIVE EXAMPLE: Credit Limit: £1200. Interest: £67 Total payable: £1267 in 11 monthly instalments of £115. Representative 11.61% APR. Interest rate: 5.6% pa
+    return ((yearlyAmount / 100 * 5.6) + yearlyAmount);
+  }
+
   render() {
-    let self = this;
-    const yearlyAmount = self.getYearlyAmount(this.props.from, this.props.to);
+    const yearlyAmount = this.getYearlyAmount(this.props.from, this.props.to);
     const perMonth = yearlyAmount / 12;
+    const clubPrice = this.calculateCommuterClub(yearlyAmount);
+    const clubPerMonth = clubPrice / 12;
     return (
-        <div className="tflAmount"><b>TFL Price:</b> £{yearlyAmount.toFixed(2)} (£{perMonth.toFixed(2)}/month)</div>
+        <div>
+          <div className="tflAmount"><b>TFL Price:</b> £{yearlyAmount.toFixed(2)} (£{perMonth.toFixed(2)}/month)</div>
+          <div className="tflAmount"><b>Commuterclub Price:</b> £{clubPrice.toFixed(2)} (£{clubPerMonth.toFixed(2)}/month)</div>
+        </div>
     )
   }
 }
