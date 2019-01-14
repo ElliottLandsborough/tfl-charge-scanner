@@ -82379,6 +82379,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _MonthAmount__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./MonthAmount */ "./resources/js/components/MonthAmount.js");
+/* harmony import */ var _TflAmount__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./TflAmount */ "./resources/js/components/TflAmount.js");
 
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -82417,6 +82418,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var Example =
 /*#__PURE__*/
 function (_Component) {
@@ -82439,7 +82441,9 @@ function (_Component) {
       transactionsForTravel: [],
       yearAverages: [],
       yearTotals: [],
-      yearMonths: []
+      yearMonths: [],
+      fromZone: 1,
+      toZone: 3
     };
     return _this;
   }
@@ -82664,28 +82668,20 @@ function (_Component) {
     key: "travelTotalPositiveInteger",
     value: function travelTotalPositiveInteger(integer) {
       return integer * -1 / 100;
-    } // todo, make this into its own component.
-
+    }
   }, {
-    key: "renderTotals",
-    value: function renderTotals() {
-      var travelTotals = this.state.travelTotals;
-      var string = '';
-      var months = '';
-
-      for (var key in travelTotals) {
-        if (travelTotals.hasOwnProperty(key)) {
-          if (key.includes('Avg') || key.includes('Total')) {
-            string += '<p><b>' + key + ': £' + travelTotals[key] + '</b></p>';
-          } else {
-            for (var month in travelTotals[key]) {
-              string += '<p>' + key + '-' + month + ': £' + travelTotals[key][month] + '</p>';
-            }
-          }
-        }
-      }
-
-      return string;
+    key: "setFromZone",
+    value: function setFromZone(event) {
+      this.setState({
+        fromZone: event.target.value
+      });
+    }
+  }, {
+    key: "setToZone",
+    value: function setToZone(event) {
+      this.setState({
+        toZone: event.target.value
+      });
     }
   }, {
     key: "render",
@@ -82713,9 +82709,30 @@ function (_Component) {
             amount: _this4.travelTotalPositiveInteger(amount)
           });
         });
-        return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+        var tflZones = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (num) {
+          return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("option", {
+            key: num,
+            value: num
+          }, num);
+        });
+        return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
           className: "month-amounts"
-        }, monthAmounts);
+        }, monthAmounts), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+          className: "zone-selector"
+        }, "From Zone", react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("select", {
+          id: "zoneFromSelector",
+          onChange: this.setFromZone.bind(this),
+          value: this.state.fromZone
+        }, tflZones), "to zone", react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("select", {
+          id: "zoneToSelector",
+          onChange: this.setToZone.bind(this),
+          value: this.state.toZone
+        }, tflZones)), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+          className: "tfl-amount"
+        }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(_TflAmount__WEBPACK_IMPORTED_MODULE_5__["default"], {
+          from: this.state.fromZone,
+          to: this.state.toZone
+        })));
       }
     }
   }]);
@@ -82818,6 +82835,121 @@ function (_Component) {
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
 /* harmony default export */ __webpack_exports__["default"] = (MonthAmount);
+
+/***/ }),
+
+/***/ "./resources/js/components/TflAmount.js":
+/*!**********************************************!*\
+  !*** ./resources/js/components/TflAmount.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+var TflAmount =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(TflAmount, _Component);
+
+  function TflAmount(props) {
+    _classCallCheck(this, TflAmount);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(TflAmount).call(this, props));
+  }
+
+  _createClass(TflAmount, [{
+    key: "getTflAmounts",
+    value: function getTflAmounts() {
+      // http://content.tfl.gov.uk/adult-fares-2019.pdf
+      var amounts = [['1-1', 35.10, 134.80, 1404], ['1-2', 35.10, 134.80, 1404], ['1-3', 41.20, 158.30, 1648], ['1-4', 50.50, 194.00, 2020], ['1-5', 60.00, 230.40, 2400], ['1-6', 64.20, 246.60, 2568], ['1-7', 69.80, 268.10, 2792], ['1-8', 82.50, 316.80, 3300], ['1-9', 91.50, 351.40, 3660], ['2-2', 26.30, 101.00, 1052], ['2-3', 26.30, 101.00, 1052], ['2-4', 29.10, 111.80, 1164], ['2-5', 34.90, 134.10, 1396], ['2-6', 43.90, 168.60, 1756], ['2-7', 45.60, 175.20, 1824], ['2-8', 62.00, 238.10, 2480], ['2-9', 62.00, 238.10, 2480], ['3-3', 26.30, 101.00, 1052], ['3-4', 26.30, 101.00, 1052], ['3-5', 29.10, 111.80, 1164], ['3-6', 34.90, 134.10, 1396], ['3-7', 45.60, 175.20, 1824], ['3-8', 62.00, 238.10, 2480], ['3-9', 62.00, 238.10, 2480], ['4-4', 26.30, 101.00, 1052], ['4-5', 26.30, 101.00, 1052], ['4-6', 29.10, 111.80, 1164], ['4-7', 33.00, 126.80, 1320], ['4-8', 55.50, 213.20, 2220], ['4-9', 55.50, 213.20, 2220], ['5-5', 26.30, 101.00, 1052], ['5-6', 26.30, 101.00, 1052], ['5-7', 33.00, 126.80, 1320], ['5-8', 55.50, 213.20, 2220], ['5-9', 55.50, 213.20, 2220], ['6-6', 26.30, 101.00, 1052], ['6-7', 33.00, 126.80, 1320], ['6-8', 55.50, 213.20, 2220], ['6-9', 55.50, 213.20, 2220], ['7-7', 33.00, 126.80, 1320], ['7-8', 55.50, 213.20, 2220], ['7-9', 55.50, 213.20, 2220], ['8-8', 55.50, 213.20, 2220], ['8-9', 55.50, 213.20, 2220], ['9-9', 82.80, 318.00, 3312]];
+      return amounts;
+    }
+  }, {
+    key: "getYearlyAmount",
+    value: function getYearlyAmount() {
+      var start = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      var finish = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
+
+      if (start > finish) {
+        var _ref = [finish, start];
+        start = _ref[0];
+        finish = _ref[1];
+      }
+
+      var amount = 0,
+          array,
+          amounts = this.getTflAmounts();
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = amounts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          array = _step.value;
+
+          if (array[0] == start + '-' + finish) {
+            amount = array[3];
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      return amount;
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var self = this;
+      var yearlyAmount = self.getYearlyAmount(this.props.from, this.props.to);
+      var perMonth = yearlyAmount / 12;
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "tflAmount"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("b", null, "TFL Price:"), " \xA3", yearlyAmount.toFixed(2), " (\xA3", perMonth.toFixed(2), "/month)");
+    }
+  }]);
+
+  return TflAmount;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+/* harmony default export */ __webpack_exports__["default"] = (TflAmount);
 
 /***/ }),
 

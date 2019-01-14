@@ -4,6 +4,7 @@ import React, {Component} from 'react';
 import { Link } from 'react-router-dom'
 import moment from 'moment'
 import MonthAmount from './MonthAmount'
+import TflAmount from './TflAmount'
 
 class Example extends Component {
   constructor(props) {
@@ -19,7 +20,9 @@ class Example extends Component {
       transactionsForTravel: [],
       yearAverages: [],
       yearTotals: [],
-      yearMonths: []
+      yearMonths: [],
+      fromZone: 1,
+      toZone: 3
     };
   }
 
@@ -212,26 +215,12 @@ class Example extends Component {
     return integer * -1 / 100;
   }
 
-  // todo, make this into its own component.
-  renderTotals() {
-    const { travelTotals } = this.state;
+  setFromZone(event) {
+    this.setState({fromZone: event.target.value});
+  }
 
-    let string = '';
-    let months = '';
-
-    for (var key in travelTotals) {
-        if (travelTotals.hasOwnProperty(key)) {
-            if (key.includes('Avg') || key.includes('Total')) {
-                string += '<p><b>' + key + ': £' + travelTotals[key] + '</b></p>';
-            } else {
-                for (var month in travelTotals[key]) {
-                    string += '<p>' + key + '-' + month + ': £' + travelTotals[key][month] + '</p>';
-                }
-            }
-        }
-    }
-
-    return string;
+  setToZone(event) {
+    this.setState({toZone: event.target.value});
   }
 
   render() {
@@ -245,10 +234,28 @@ class Example extends Component {
       const monthAmounts = this.state.yearMonths.map((amount, key) =>
         <MonthAmount key={key} yearMonth={key} amount={this.travelTotalPositiveInteger(amount)} />
       );
+      const tflZones = [1,2,3,4,5,6,7,8,9].map((num) =>
+        <option key={num} value={num}>{num}</option>
+      );
 
       return (
-        <div className='month-amounts'>
-          {monthAmounts}
+        <div>
+          <div className='month-amounts'>
+            {monthAmounts}
+          </div>
+          <div className="zone-selector">
+            From Zone
+            <select id="zoneFromSelector" onChange={this.setFromZone.bind(this)} value={this.state.fromZone}>
+              {tflZones}
+            </select>
+            to zone
+            <select id="zoneToSelector" onChange={this.setToZone.bind(this)} value={this.state.toZone}>
+              {tflZones}
+            </select>
+          </div>
+          <div className='tfl-amount'>
+            <TflAmount from={this.state.fromZone} to={this.state.toZone} />
+          </div>
         </div>
       )
     }
