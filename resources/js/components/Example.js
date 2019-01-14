@@ -240,8 +240,12 @@ class Example extends Component {
 
       return (
         <div>
-          <div className='month-amounts'>
-            {monthAmounts}
+          <div className="month-amounts">
+            <div className="container">
+              <div className="row">
+                {monthAmounts}
+              </div>
+            </div>
           </div>
           <div className="zone-selector">
             From Zone
@@ -253,7 +257,7 @@ class Example extends Component {
               {tflZones}
             </select>
           </div>
-          <div className='tfl-amount'>
+          <div className="tfl-amount">
             <TflAmount from={this.state.fromZone} to={this.state.toZone} />
           </div>
         </div>

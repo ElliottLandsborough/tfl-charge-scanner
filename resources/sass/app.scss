@@ -19,7 +19,8 @@
         -moz-border-radius:5px;
         -webkit-border-radius:5px;
         border-radius:5px;
-        display: inline-block;
+        display: block;
+        width: 100%;
         text-align: center;
         margin: 10px 5px 0;
         border: 1px solid #999;
@@ -28,10 +29,10 @@
             position: relative;
             display: inline-block;
             padding: 20px 0 50px 0;
-            min-width: 100px;
             margin: 0;
             font-weight: bold;
             font-size: 20px;
+            width: 100%;
             span {
                 background: #ddd;
                 display: block;
@@ -45,4 +46,12 @@
             }
         }
     }
+}
+
+.zone-selector {
+    text-align: center;
+}
+
+.tfl-amount {
+    text-align: center;
 }
