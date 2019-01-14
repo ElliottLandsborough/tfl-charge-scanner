@@ -10500,11 +10500,12 @@ a.text-dark:focus {
 }
 
 .month-amounts .month-amount {
-  border-radius: 3px;
+  border-radius: 5px;
   display: inline-block;
   text-align: center;
   margin: 10px 5px 0;
-  border: 1px solid #000;
+  border: 1px solid #999;
+  overflow: hidden;
 }
 
 .month-amounts .month-amount p {
