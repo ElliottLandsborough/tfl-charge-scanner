@@ -97,3 +97,11 @@
         line-height: 13px;
     }
 }
+
+canvas {
+    display: block;
+    max-width: 1200px;
+    width: 95% !important;
+    height: 600px;
+    margin: 20px auto;
+}
