@@ -68,7 +68,18 @@ class GraphAmounts extends Component {
 
   render() {
     const chartData = this.barChartData();
-    const chartOptions = {};
+    const chartOptions = {
+      scales: {
+        yAxes: [{
+          display: true,
+          ticks: {
+            suggestedMin: 0, // minimum will be 0, unless there is a lower value
+            // OR //
+            //beginAtZero: true, // minimum value will be 0
+          }
+        }]
+      }
+    };
     return (
       <div className="price-graph">
         <Bar data={chartData} options={chartOptions}/>
