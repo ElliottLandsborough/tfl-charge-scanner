@@ -65,3 +65,35 @@
         margin-top: 10px;
     }
 }
+
+.auth-button {
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius: 5px;
+    display: block;
+    margin: 80px auto;
+    background-color: #fd3a4a;
+    color: #fff;
+    font-size: 20px;
+    padding: 10px;
+    width: 230px;
+    text-align: center;
+    font-weight: bold;
+    &:hover {
+        color: #fff;
+        background-color: #fd6874;
+        text-decoration: none;
+    }
+}
+
+.footer {
+    margin-top: 40px;
+    display: block;
+    p {
+        color: #b7b7b7;
+        text-align: center;
+        margin-bottom: 5px;
+        font-size: 13px;
+        line-height: 13px;
+    }
+}

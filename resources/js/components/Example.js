@@ -315,7 +315,7 @@ class Example extends Component {
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isAuthorized) {
-      return <a className='navbar-brand' href='/auth'>Authorize with monzo</a>;
+      return <a className='auth-button' href='/auth'>Authorize with Monzo</a>;
     } else {
       const tflZones = [1,2,3,4,5,6,7,8,9].map((num) =>
         <option key={num} value={num}>{num}</option>
