@@ -44,20 +44,30 @@ class GraphAmounts extends Component {
     const barChartData = {
         labels: labels,
         datasets: [{
-          label: 'Monzo Payments',
-          data: monzoPayments
-        },{
           label: 'TFL Price',
           data: tflPrices,
-
-          // Changes this dataset to become a line
-          type: 'line'
+          type: 'line',
+          //showLine: false
+          fill: false,
+          backgroundColor: '#d0ebfb',
+          borderColor: '#1189cc',
+          borderWidth: 1
         },{
           label: 'Club Price',
           data: clubPrices,
-
-          // Changes this dataset to become a line
-          type: 'line'
+          type: 'line',
+          //showLine: false
+          fill: false,
+          backgroundColor: '#e6fffd',
+          borderColor: '#00a9a1',
+          borderWidth: 1
+        },
+        {
+          label: 'Monzo Payments',
+          data: monzoPayments,
+          backgroundColor: '#fee6e8',
+          borderColor: '#fd3a4a',
+          borderWidth: 1,
         }]
     };
 
@@ -76,8 +86,26 @@ class GraphAmounts extends Component {
             suggestedMin: 0, // minimum will be 0, unless there is a lower value
             // OR //
             //beginAtZero: true, // minimum value will be 0
+
+            userCallback: function(value, index, values) {
+                // Convert the number to a string and splite the string every 3 charaters from the end
+                value = value.toString();
+                value = value.split(/(?=(?:...)*$)/);
+
+                // Convert the array to a string and format the output
+                value = value.join('.');
+                return '£' + value;
+            }
           }
         }]
+      },
+      tooltips: {
+        callbacks: {
+            label: function(tooltipItem, chart){
+                var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                return ' £' + tooltipItem.yLabel.toFixed(2);
+            }
+        }
       }
     };
     return (
