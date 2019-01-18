@@ -92,8 +92,6 @@ class Example extends Component {
 
     let amount = 0, array, amounts = this.getTflAmounts();
 
-    console.log(start, finish);
-
     for (array of amounts) {
       if (array[0] == (start + '-' + finish)) {
         amount = array[3];

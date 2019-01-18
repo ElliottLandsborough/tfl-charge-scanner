@@ -71,8 +71,6 @@ class GraphAmounts extends Component {
         }]
     };
 
-    console.log(this.props.yearMonths);
-
     return barChartData;
   }
 
