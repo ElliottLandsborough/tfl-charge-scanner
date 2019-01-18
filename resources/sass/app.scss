@@ -53,8 +53,15 @@
 
 .zone-selector {
     text-align: center;
+    margin-top: 10px;
+    select {
+        margin: 0 4px;
+    }
 }
 
 .tfl-amount {
     text-align: center;
+    .amount-info {
+        margin-top: 10px;
+    }
 }

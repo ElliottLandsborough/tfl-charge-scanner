@@ -14,8 +14,8 @@ class TflAmount extends Component {
     const clubPerMonth = clubAmount / 12;
     return (
       <div>
-        <div><b>TFL Price:</b> £{yearlyAmount.toFixed(2)} (£{perMonth.toFixed(2)}/month)</div>
-        <div><b>Commuterclub Price:</b> £{clubAmount.toFixed(2)} (£{clubPerMonth.toFixed(2)}/month)</div>
+        <div className="amount-info"><b>TFL Price:</b> £{yearlyAmount.toFixed(2)} (£{perMonth.toFixed(2)}/month)</div>
+        <div className="amount-info"><b>Commuterclub Price:</b> £{clubAmount.toFixed(2)} (£{clubPerMonth.toFixed(2)}/month)</div>
       </div>
     )
   }
