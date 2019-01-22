@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import Header from './Header'
-import Example from './Example'
+import Home from './Home'
 
 class App extends Component {
   render () {
@@ -13,7 +13,7 @@ class App extends Component {
         <div>
           <Header />
           <Switch>
-            <Route exact path='/' component={Example} />
+            <Route exact path='/' component={Home} />
           </Switch>
         </div>
       </BrowserRouter>
