@@ -52,7 +52,7 @@ class GraphAmounts extends Component {
           borderColor: '#1189cc',
           borderWidth: 1
         },{
-          label: 'Club Price',
+          label: 'Commuter Club Price',
           data: clubPrices,
           type: 'line',
           //showLine: false
