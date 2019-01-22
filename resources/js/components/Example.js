@@ -19,6 +19,7 @@ class Example extends Component {
       accountId: false,
       transactions: [],
       transactionsForTravel: [],
+      travelTransactionsLastDate: false,
       yearAverages: [],
       yearTotals: [],
       yearMonths: [],
@@ -232,12 +233,18 @@ class Example extends Component {
   // this is a bit weird because we have to call the api once at a time...
   // maybe do it by month instead?
   populateTransactions() {
+    // get the transactions from localstorage and update state with them
+    this.setState({
+        transactionsForTravel: JSON.parse(localStorage.getItem('travelTransactions')),
+        travelTransactionsLastDate: JSON.parse(localStorage.getItem('travelTransactionsLastDate'))
+    });
+
     let self = this;
     // TODO: handle the 401 here, probably clear the credentials
     // and set the state back to isAuthorized: false, clear the old creds
     let transactionsLoop = async function () {
       let continueLoop = true;
-      let lastDate = false;
+      let lastDate = self.state.travelTransactionsLastDate;
       while (continueLoop) {
         const response = await fetch(self.generateTransactionUrl(lastDate), self.authParams());
         const json = await response.json();
@@ -248,8 +255,19 @@ class Example extends Component {
 
         // so just get transport ones
         transactions.forEach(function(transaction) {
-            if (transaction.category == 'transport' && transaction.description.toLowerCase().includes('tfl.gov.uk')) {
-                self.setState({ transactionsForTravel: [...self.state.transactionsForTravel, ...[transaction] ] });
+            if (transaction.category == 'transport' && transaction.description.toLowerCase().includes('tfl.gov.uk') && transaction.account_id == self.state.accountId) {
+                self.setState({
+                    transactionsForTravel: [...self.state.transactionsForTravel, ...[{
+                        // only take what is needed out of the transaction
+                        account_id: transaction.account_id,
+                        amount: transaction.amount,
+                        created: transaction.created,
+                        id: transaction.id
+                    }] ]
+                });
+
+                // store the transactions in the browsers localstorage
+                self.storeTravelTransactions();
             }
         });
 
@@ -264,6 +282,12 @@ class Example extends Component {
     }
 
     transactionsLoop();
+  }
+
+  storeTravelTransactions()
+  {
+    localStorage.setItem('travelTransactions', JSON.stringify(this.state.transactionsForTravel));
+    localStorage.setItem('travelTransactionsLastDate', JSON.stringify(this.state.transactionsForTravel[this.state.transactionsForTravel.length-1].created));
   }
 
   travelTotals() {
