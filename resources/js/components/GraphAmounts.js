@@ -1,3 +1,5 @@
+// resources/assets/js/components/GraphAmounts.js
+
 import React, {Component} from 'react';
 import moment from 'moment';
 import {Bar} from 'react-chartjs-2';

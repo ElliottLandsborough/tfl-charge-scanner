@@ -3,7 +3,6 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom'
 import moment from 'moment'
-//import MonthAmount from './MonthAmount'
 import GraphAmounts from './GraphAmounts'
 import TflAmount from './TflAmount'
 import Loader from './Loader'
