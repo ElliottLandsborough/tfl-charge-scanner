@@ -1,4 +1,13 @@
 const mix = require('laravel-mix');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const webpack = require('webpack');
+
+mix.webpackConfig({
+  plugins: [
+    new BundleAnalyzerPlugin(),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+  ],
+});
 
 /*
  |--------------------------------------------------------------------------
