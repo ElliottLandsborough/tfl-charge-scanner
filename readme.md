@@ -1,6 +1,6 @@
 # Monzo Balance
 
 todo:
+ - logout
  - dockerize
- - domain
  - deployment
