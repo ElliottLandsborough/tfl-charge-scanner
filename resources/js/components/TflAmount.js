@@ -14,10 +14,12 @@ class TflAmount extends Component {
     const perMonth = yearlyAmount / 12;
     const clubAmount = this.props.clubAmount;
     const clubPerMonth = clubAmount / 12;
+
     return (
       <div>
         <div className="amount-info"><b>TFL:</b> £{yearlyAmount.toFixed(2)} (£{perMonth.toFixed(2)}/m)</div>
         <div className="amount-info"><b>Commuter Club:</b> £{clubAmount.toFixed(2)} (£{clubPerMonth.toFixed(2)}/m)</div>
+        <div className="amount-info"><b>Average Monzo Cost:</b> £{this.props.monzoMonthlyAverage}/m</div>
       </div>
     )
   }

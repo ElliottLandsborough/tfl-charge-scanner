@@ -28,7 +28,8 @@ class Example extends Component {
       yearlyAmount: 0,
       clubAmount: 0,
       sinceDate: false,
-      loadingIsComplete: false
+      loadingIsComplete: false,
+      fullTotal: 0,
     };
   }
 
@@ -155,10 +156,14 @@ class Example extends Component {
     fetch(monzoApi + '/accounts', this.authParams())
       .then(function(response) {
         if(response.status !== 200) {
+          /*
           self.setState({
             isAuthorized: false,
             accessToken: false
-          });
+          });*/
+          // did not get a 200, log the user out
+          // TODO: some kind of error message?
+          this.logOut();
         }
         return response;
       })
@@ -221,13 +226,16 @@ class Example extends Component {
     }
   }
 
+  setSinceDate() {
+    const since = moment().subtract(12, 'months').format('Y-MM') + '-01T00:00:00Z';
+    this.setState({sinceDate: since});
+  }
+
   generateTransactionUrl(since = false) {
     const { monzoApi, accountId } = this.state;
 
     if (!since) {
-      let sinceDate = moment().subtract(12, 'months').format('Y-MM');
-      since = sinceDate + '-01T00:00:00Z';
-      this.setState({sinceDate: sinceDate + '-01T00:00:00'});
+        since = this.state.sinceDate;
     }
 
     let params = {
@@ -242,7 +250,7 @@ class Example extends Component {
 
   getDaysPercentage()
   {
-    if (this.state.sinceDate !== false && this.state.lastDate !== false && this.state.transactionsForTravel.length) {
+    if (this.state.sinceDate !== false && this.state.transactionsForTravel.length) {
         const lastDateString = this.state.transactionsForTravel[this.state.transactionsForTravel.length-1].created;
         const nowDate = moment();
         const fromDate = moment(this.state.sinceDate);
@@ -257,15 +265,42 @@ class Example extends Component {
     return 0;
   }
 
+  getMonzoMonthlyAverage()
+  {
+    const fullTotal = this.state.fullTotal * -1 / 100;
+    if (this.state.sinceDate !== false && fullTotal > 0) {
+        const daysInMonth = 30.44 // average number of days in a month including leaps
+        const fromDate = moment(this.state.sinceDate);
+        const nowDate = moment();
+        const fromStartUntilNow = moment.duration(nowDate.diff(fromDate)).as('days');
+        const exactMonths = fromStartUntilNow / daysInMonth;
+
+        return (fullTotal / exactMonths).toFixed(2);
+    }
+
+    return 0;
+  }
+
   // this is a bit weird because we have to call the api once at a time...
   // maybe do it by month instead?
   populateTransactions() {
+    this.setSinceDate();
+
+    const usedTxKeys = [];
+
     // get the transactions from localstorage and update state with them
     if (localStorage.getItem('travelTransactions')) {
+        const travelTransactionsFromStorage = JSON.parse(localStorage.getItem('travelTransactions'));
         this.setState({
-            transactionsForTravel: JSON.parse(localStorage.getItem('travelTransactions')),
-            travelTransactionsLastDate: JSON.parse(localStorage.getItem('travelTransactionsLastDate'))
+            transactionsForTravel: travelTransactionsFromStorage,
+            travelTransactionsLastDate: JSON.parse(localStorage.getItem('travelTransactionsLastDate')),
         });
+
+        travelTransactionsFromStorage.forEach(function(item) {
+            usedTxKeys.push(item.id);
+        });
+
+        this.travelTotals();
     }
 
     let self = this;
@@ -279,24 +314,24 @@ class Example extends Component {
         const json = await response.json();
         const transactions = json.transactions
 
-        // no need to store all transactions at the moment
-        //self.setState({ transactions: [...self.state.transactions, ...transactions ] });
-
         // so just get transport ones
         transactions.forEach(function(transaction) {
             if (transaction.category == 'transport' && transaction.description.toLowerCase().includes('tfl.gov.uk') && transaction.account_id == self.state.accountId) {
-                self.setState({
-                    transactionsForTravel: [...self.state.transactionsForTravel, ...[{
-                        // only take what is needed out of the transaction
-                        account_id: transaction.account_id,
-                        amount: transaction.amount,
-                        created: transaction.created,
-                        id: transaction.id
-                    }] ]
-                });
+                // only write out items that arent already from the localstorage
+                if (!usedTxKeys.includes(transaction.id)) {
+                    self.setState({
+                        transactionsForTravel: [...self.state.transactionsForTravel, ...[{
+                            // only take what is needed out of the transaction
+                            account_id: transaction.account_id,
+                            amount: transaction.amount,
+                            created: transaction.created,
+                            id: transaction.id
+                        }] ]
+                    });
 
-                // store the transactions in the browsers localstorage
-                self.storeTravelTransactions();
+                    // store the transactions in the browsers localstorage
+                    self.storeTravelTransactions();
+                }
             }
         });
 
@@ -324,6 +359,7 @@ class Example extends Component {
     let yearAverages = {};
     let yearTotals = {};
     let yearMonths = {};
+    let fullTotal = 0;
 
     this.state.transactionsForTravel.forEach(function(transaction) {
       const amount = transaction.amount;
@@ -338,12 +374,15 @@ class Example extends Component {
 
       if (typeof yearMonths['' + year + month] == "undefined") yearMonths['' + year + month] = 0;
       yearMonths['' + year + month] += amount;
+
+      fullTotal += amount;
     });
 
     this.setState({
         yearAverages: yearAverages,
         yearTotals: yearTotals,
-        yearMonths: yearMonths
+        yearMonths: yearMonths,
+        fullTotal: fullTotal,
     });
   }
 
@@ -404,7 +443,7 @@ class Example extends Component {
             </select>
           </div>
           <div className="tfl-amount">
-            <TflAmount yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} />
+            <TflAmount yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} monzoMonthlyAverage={this.getMonzoMonthlyAverage()} />
           </div>
           <div className="log-out">
             <button className="logout" onClick={this.logOut}>Logout</button>
