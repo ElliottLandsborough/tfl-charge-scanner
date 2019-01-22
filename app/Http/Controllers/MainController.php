@@ -55,7 +55,9 @@ class MainController extends Controller
 
     public function logout(Request $request)
     {
+        // remove all session vars
         $request->session()->forget('monzo_auth');
+        $request->session()->flush();
 
         return response()->json([]);
     }
