@@ -53,7 +53,8 @@
 
 .zone-selector {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 16px;
+    font-size: 24px;
     select {
         margin: 0 4px;
     }
@@ -61,8 +62,9 @@
 
 .tfl-amount {
     text-align: center;
+    font-size: 24px;
     .amount-info {
-        margin-top: 10px;
+        margin-top: 16px;
     }
 }
 
@@ -93,7 +95,7 @@
         border-collapse: collapse;
         border: none;
         display: block;
-        margin: 15px auto 0px;
+        margin: 26px auto 0px;
         background-color: #fd3a4a;
         color: #fff;
         font-size: 18px;
