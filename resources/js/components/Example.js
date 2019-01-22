@@ -6,6 +6,7 @@ import moment from 'moment'
 //import MonthAmount from './MonthAmount'
 import GraphAmounts from './GraphAmounts'
 import TflAmount from './TflAmount'
+import Loader from './Loader'
 
 class Example extends Component {
   constructor(props) {
@@ -26,7 +27,9 @@ class Example extends Component {
       fromZone: 0,
       toZone: 0,
       yearlyAmount: 0,
-      clubAmount: 0
+      clubAmount: 0,
+      sinceDate: false,
+      loadingIsComplete: false
     };
     this.setFromZone = this.setFromZone.bind(this);
     this.setToZone = this.setToZone.bind(this);
@@ -217,7 +220,9 @@ class Example extends Component {
     const { monzoApi, accountId } = this.state;
 
     if (!since) {
-      since = moment().subtract(12, 'months').format('Y-MM') + '-01T00:00:00Z';
+      let sinceDate = moment().subtract(12, 'months').format('Y-MM');
+      since = sinceDate + '-01T00:00:00Z';
+      this.setState({sinceDate: sinceDate + '-01T00:00:00'});
     }
 
     let params = {
@@ -228,6 +233,23 @@ class Example extends Component {
     };
 
     return monzoApi + '/transactions?' + this.urlEncode(params);
+  }
+
+  getDaysPercentage()
+  {
+    if (this.state.sinceDate !== false && this.state.lastDate !== false && this.state.transactionsForTravel.length) {
+        const lastDateString = this.state.transactionsForTravel[this.state.transactionsForTravel.length-1].created;
+        const nowDate = moment();
+        const fromDate = moment(this.state.sinceDate);
+        const lastDate = moment(lastDateString);
+        const fromStartUntilNow = moment.duration(nowDate.diff(fromDate)).as('days');
+        const fromstartUntilLast = moment.duration(lastDate.diff(fromDate)).as('days');
+        const percentage = Math.round(fromstartUntilLast / fromStartUntilNow * 100);
+
+        return percentage;
+    }
+
+    return 0;
   }
 
   // this is a bit weird because we have to call the api once at a time...
@@ -277,6 +299,7 @@ class Example extends Component {
 
         if (transactions.length < 100) {
           continueLoop = false;
+          self.setState({loadingIsComplete: true});
         }
       }
     }
@@ -344,6 +367,7 @@ class Example extends Component {
       );
       return (
         <div>
+          <Loader daysPercentage={this.getDaysPercentage()} loadingIsComplete={this.state.loadingIsComplete} />
           <GraphAmounts yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} yearMonths={this.state.yearMonths} />
           <div className="zone-selector">
             From Zone

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import moment from 'moment';
 import {Bar} from 'react-chartjs-2';
-import TflAmount from './TflAmount'
 
 class GraphAmounts extends Component {
 
