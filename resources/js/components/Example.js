@@ -262,10 +262,12 @@ class Example extends Component {
   // maybe do it by month instead?
   populateTransactions() {
     // get the transactions from localstorage and update state with them
-    this.setState({
-        transactionsForTravel: JSON.parse(localStorage.getItem('travelTransactions')),
-        travelTransactionsLastDate: JSON.parse(localStorage.getItem('travelTransactionsLastDate'))
-    });
+    if (localStorage.getItem('travelTransactions')) {
+        this.setState({
+            transactionsForTravel: JSON.parse(localStorage.getItem('travelTransactions')),
+            travelTransactionsLastDate: JSON.parse(localStorage.getItem('travelTransactionsLastDate'))
+        });
+    }
 
     let self = this;
     // TODO: handle the 401 here, probably clear the credentials
@@ -374,6 +376,7 @@ class Example extends Component {
     // reset localstorage
     localStorage.setItem('travelTransactions', JSON.stringify([]));
     localStorage.setItem('travelTransactionsLastDate', JSON.stringify(false));
+    localStorage.clear();
   }
 
   render() {
