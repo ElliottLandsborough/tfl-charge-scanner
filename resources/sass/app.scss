@@ -54,15 +54,17 @@
 .zone-selector {
     text-align: center;
     margin-top: 16px;
-    font-size: 24px;
+    font-size: 20px;
     select {
-        margin: 0 4px;
+        display: inline-block;
+        width: 60px;
+        margin: 0 10px;
     }
 }
 
 .tfl-amount {
     text-align: center;
-    font-size: 24px;
+    font-size: 20px;
     .amount-info {
         margin-top: 16px;
     }

@@ -395,11 +395,11 @@ class Example extends Component {
           <GraphAmounts yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} yearMonths={this.state.yearMonths} />
           <div className="zone-selector">
             From zone
-            <select id="zoneFromSelector" onChange={this.setFromZone} value={this.state.fromZone}>
+            <select id="zoneFromSelector" className="form-control" onChange={this.setFromZone} value={this.state.fromZone}>
               {tflZones}
             </select>
             to zone
-            <select id="zoneToSelector" onChange={this.setToZone} value={this.state.toZone}>
+            <select id="zoneToSelector" className="form-control" onChange={this.setToZone} value={this.state.toZone}>
               {tflZones}
             </select>
           </div>
