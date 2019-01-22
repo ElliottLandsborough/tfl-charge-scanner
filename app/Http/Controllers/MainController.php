@@ -52,4 +52,11 @@ class MainController extends Controller
 
         return response()->json($array);
     }
+
+    public function logout(Request $request)
+    {
+        $request->session()->forget('monzo_auth');
+
+        return response()->json([]);
+    }
 }

@@ -15,3 +15,4 @@ Route::get('/', 'MainController@home')->name('home');
 Route::get('/auth', 'MainController@authUrl');
 Route::get('/callback', 'MainController@callback')->name('callback');
 Route::get('/credentials', 'MainController@credentials')->name('credentials');
+Route::get('/logout', 'MainController@logout')->name('logout');

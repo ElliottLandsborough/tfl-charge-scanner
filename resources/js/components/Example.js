@@ -9,9 +9,9 @@ import TflAmount from './TflAmount'
 import Loader from './Loader'
 
 class Example extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
+
+  initialState() {
+    return {
       monzoApi: 'https://api.monzo.com',
       error: null,
       isAuthorized: false,
@@ -31,8 +31,14 @@ class Example extends Component {
       sinceDate: false,
       loadingIsComplete: false
     };
+  }
+
+  constructor(props) {
+    super(props)
+    this.state = this.initialState();
     this.setFromZone = this.setFromZone.bind(this);
     this.setToZone = this.setToZone.bind(this);
+    this.logOut = this.logOut.bind(this);
   }
 
   getTflAmounts() {
@@ -206,10 +212,10 @@ class Example extends Component {
     return out.join('&');
   }
 
-  authParams() {
+  authParams(method = 'GET') {
     const { accessToken } = this.state;
     return {
-      method: 'GET',
+      method: method,
       headers: {
         'Authorization': 'Bearer ' + accessToken
       }
@@ -354,6 +360,22 @@ class Example extends Component {
     this.setState({fromZone: fromZone, toZone: toZone, yearlyAmount: yearlyAmount, clubAmount: clubAmount});
   }
 
+  logOut() {
+    // async get all logout urls, no need to process response
+    fetch(this.state.monzoApi + '/oauth2/logout', this.authParams('POST'));
+    fetch('/logout');
+
+    // reset state
+    this.setState({
+        isAuthorized: false,
+        accessToken: false
+    });
+
+    // reset localstorage
+    localStorage.setItem('travelTransactions', JSON.stringify([]));
+    localStorage.setItem('travelTransactionsLastDate', JSON.stringify(false));
+  }
+
   render() {
     const { error, isAuthorized, items, travelTotals } = this.state;
 
@@ -370,7 +392,7 @@ class Example extends Component {
           <Loader daysPercentage={this.getDaysPercentage()} loadingIsComplete={this.state.loadingIsComplete} />
           <GraphAmounts yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} yearMonths={this.state.yearMonths} />
           <div className="zone-selector">
-            From Zone
+            From zone
             <select id="zoneFromSelector" onChange={this.setFromZone} value={this.state.fromZone}>
               {tflZones}
             </select>
@@ -381,6 +403,9 @@ class Example extends Component {
           </div>
           <div className="tfl-amount">
             <TflAmount yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} />
+          </div>
+          <div className="log-out">
+            <button className="logout" onClick={this.logOut}>Logout</button>
           </div>
         </div>
       )

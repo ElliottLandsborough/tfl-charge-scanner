@@ -86,6 +86,28 @@
     }
 }
 
+.log-out {
+    .logout {
+        border-radius: 5px;
+        border-collapse: collapse;
+        border: none;
+        display: block;
+        margin: 15px auto 0px;
+        background-color: #fd3a4a;
+        color: #fff;
+        font-size: 18px;
+        padding: 5px;
+        width: 90px;
+        text-align: center;
+        font-weight: bold;
+        &:hover {
+            color: #fff;
+            background-color: #fd6874;
+            text-decoration: none;
+        }
+    }
+}
+
 .footer {
     margin-top: 40px;
     display: block;
