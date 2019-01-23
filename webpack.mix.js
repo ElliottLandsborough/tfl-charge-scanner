@@ -7,11 +7,12 @@ mix.webpackConfig({
      'alias': {
        'react': 'preact-compat',
        'react-dom': 'preact-compat',
+       'chart.js': 'chart.js/dist/Chart.js', //
      },
     },
   plugins: [
     new BundleAnalyzerPlugin(),
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), // ignore moment locale if moment is included
   ],
 });
 

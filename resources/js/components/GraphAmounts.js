@@ -1,7 +1,7 @@
 // resources/assets/js/components/GraphAmounts.js
 
-import React, {Component} from 'react';
-import {Bar} from 'react-chartjs-2';
+import React, {Component} from 'react'
+import {Bar} from 'react-chartjs-2'
 // date-fns
 import dateFormat from 'date-fns/format'
 import dateParse from 'date-fns/parse'
@@ -13,7 +13,7 @@ class GraphAmounts extends Component {
   }
 
   constructor(props) {
-    super(props)
+    super(props);
   }
 
   travelTotalPositiveInteger(integer) {
@@ -109,6 +109,7 @@ class GraphAmounts extends Component {
         }
       }
     };
+    const {height, width, id} = this.props;
     return (
       <div className="price-graph">
         <Bar data={chartData} options={chartOptions}/>
