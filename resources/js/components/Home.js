@@ -2,10 +2,14 @@
 
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom'
-import moment from 'moment'
 import GraphAmounts from './GraphAmounts'
 import TflAmount from './TflAmount'
 import Loader from './Loader'
+// date-fns
+import dateSubMonths from 'date-fns/sub_months'
+import dateFormat from 'date-fns/format'
+import dateParse from 'date-fns/parse'
+import dateDiffInDays from 'date-fns/difference_in_days'
 
 class Example extends Component {
 
@@ -290,7 +294,10 @@ class Example extends Component {
    * Set the date to start counting transactions from
    */
   setSinceDate() {
-    const since = moment().subtract(12, 'months').format('Y-MM') + '-01T00:00:00Z';
+    // subtract 12 months
+    const sinceObject = dateSubMonths(new Date(), 12);
+    // format it
+    const since = dateFormat(sinceObject, 'YYYY-MM') + '-01T00:00:00Z'
     this.setState({sinceDate: since});
   }
 
@@ -320,18 +327,21 @@ class Example extends Component {
   {
     // this can only happen if we have both a start date and the api has returned some transactions
     if (this.state.sinceDate !== false && this.state.transactionsForTravel.length) {
-        // date we start querying api from
-        const fromDate = moment(this.state.sinceDate);
-        // now
-        const nowDate = moment();
         // last date from list of transactions (string)
         const lastDateString = this.state.transactionsForTravel[this.state.transactionsForTravel.length-1].created;
-        // create date object from string
-        const lastDate = moment(lastDateString);
+
         // day count between now and when we started querying the api
-        const fromStartUntilNow = moment.duration(nowDate.diff(fromDate)).as('days');
+        const fromStartUntilNow = dateDiffInDays(
+            new Date(), // now
+            dateParse(this.state.sinceDate) // date we start querying api from
+        );
+
         // day count between when we started querying the api and the last thing the api returned
-        const fromstartUntilLast = moment.duration(lastDate.diff(fromDate)).as('days');
+        const fromstartUntilLast = dateDiffInDays(
+            dateParse(lastDateString),  // last date from list of transactions (string)
+            dateParse(this.state.sinceDate) // date we start querying api from
+        );
+
         // calc percentage
         const percentage = Math.round(fromstartUntilLast / fromStartUntilNow * 100);
 
@@ -353,15 +363,13 @@ class Example extends Component {
     if (this.state.sinceDate !== false && fullTotal > 0) {
         // average number of days in a month including leaps
         const daysInMonth = 30.44;
-        // date object of start date
-        const fromDate = moment(this.state.sinceDate);
-        // date object of now
-        const nowDate = moment();
         // how many days exist between start and now?
-        const fromStartUntilNow = moment.duration(nowDate.diff(fromDate)).as('days');
+        const fromStartUntilNow1 = dateDiffInDays(
+            new Date(),
+            dateParse(this.state.sinceDate)
+        )
         // and this equates to how many months (e.g 12.76)
-        const exactMonths = fromStartUntilNow / daysInMonth;
-
+        const exactMonths = fromStartUntilNow1 / daysInMonth;
         // the total equates to this much per month
         return (fullTotal / exactMonths).toFixed(2);
     }

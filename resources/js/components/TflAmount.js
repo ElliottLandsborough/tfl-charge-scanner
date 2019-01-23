@@ -1,7 +1,6 @@
 // resources/assets/js/components/TflAmount.js
 
 import React, {Component} from 'react';
-import moment from 'moment';
 
 class TflAmount extends Component {
 

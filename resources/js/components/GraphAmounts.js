@@ -1,8 +1,10 @@
 // resources/assets/js/components/GraphAmounts.js
 
 import React, {Component} from 'react';
-import moment from 'moment';
 import {Bar} from 'react-chartjs-2';
+// date-fns
+import dateFormat from 'date-fns/format'
+import dateParse from 'date-fns/parse'
 
 class GraphAmounts extends Component {
 
@@ -35,7 +37,7 @@ class GraphAmounts extends Component {
 
     labelDates.forEach(function(value) {
       const parsedDate = value.toString().substr(0, 4) + '-' + value.toString().substr(4, 2) + "-01";
-      const date = moment(parsedDate).format('MMM Y');
+      const date = dateFormat(dateParse(parsedDate), 'MMM YYYY');
       labels.push(date);
       monzoPayments.push(self.travelTotalPositiveInteger(self.props.yearMonths[value]));
       tflPrices.push(yealyAmount);
