@@ -114,7 +114,7 @@
 }
 
 .footer {
-    margin-top: 40px;
+    margin-top: 10px;
     display: block;
     p {
         color: #b7b7b7;
@@ -139,4 +139,14 @@
     top: 52px;
     width: 100%;
     height: 3px;
+}
+
+.affiliates {
+    margin-top: 30px;
+    p {
+        text-align: center;
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+    }
 }
