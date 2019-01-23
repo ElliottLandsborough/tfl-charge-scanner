@@ -1,3 +1,5 @@
+// resources/assets/js/components/MonthAmount.js
+
 import React, {Component} from 'react';
 // date-fns
 import dateFormat from 'date-fns/format'

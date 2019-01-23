@@ -1,4 +1,4 @@
-// resources/assets/js/components/Example.js
+// resources/assets/js/components/Home.js
 
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom'
@@ -11,7 +11,7 @@ import dateFormat from 'date-fns/format'
 import dateParse from 'date-fns/parse'
 import dateDiffInDays from 'date-fns/difference_in_days'
 
-class Example extends Component {
+class Home extends Component {
 
   /**
    * Constructor
@@ -573,4 +573,4 @@ class Example extends Component {
   }
 }
 
-export default Example;
+export default Home;

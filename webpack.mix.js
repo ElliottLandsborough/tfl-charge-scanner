@@ -5,9 +5,9 @@ const webpack = require('webpack');
 mix.webpackConfig({
    'resolve': {
      'alias': {
-       'react': 'preact-compat',
-       'react-dom': 'preact-compat',
-       'chart.js': 'chart.js/dist/Chart.js', //
+       'react': 'preact-compat', // use preact for react stuff
+       'react-dom': 'preact-compat', // use preact for react stuff
+       'chart.js': 'chart.js/dist/Chart.js', // force non-moment version of chart to load
      },
     },
   plugins: [

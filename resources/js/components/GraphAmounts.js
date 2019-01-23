@@ -8,22 +8,16 @@ import dateParse from 'date-fns/parse'
 
 class GraphAmounts extends Component {
 
-  randomScalingFactor() {
-    return Math.floor(Math.random() * 101);
-  }
-
   constructor(props) {
     super(props);
   }
 
+  // invert number and convert pence to pounds
   travelTotalPositiveInteger(integer) {
     return integer * -1 / 100;
   }
 
-  isFunction(functionToCheck) {
-    return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
-  }
-
+  // generate the bar chart data
   barChartData() {
     let self = this;
     const labelDates = Object.keys(this.props.yearMonths);
