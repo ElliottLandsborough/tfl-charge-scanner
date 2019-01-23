@@ -54,6 +54,7 @@ class Home extends Component {
       sinceDate: false, // when to count transactions from
       loadingIsComplete: false, // becomes true when transaction loop finishes
       fullTotal: 0, // all monzo tfl transactions added together
+      usedTxKeys: [], // transaction ids that have already been grabbed from the api
     };
   }
 
@@ -158,6 +159,9 @@ class Home extends Component {
 
     // initialize auth, get an access token from laravel
     this.initializeAuthentication();
+
+    // set the since date in the state
+    this.setSinceDate();
   }
 
   /**
@@ -236,7 +240,9 @@ class Home extends Component {
       )
       .then(
           () => {
-            // success, try to get transactions from api
+            // success, first try to fill transactions from localstorage
+            this.fillTransactionsFromLocalStorage();
+            // then try to get transactions from api
             this.populateTransactions();
           }
       )
@@ -377,45 +383,72 @@ class Home extends Component {
     return 0;
   }
 
-  // this is a bit weird because we have to call the api once at a time...
-  // maybe do it by month instead?
-  // TODO: clean this up!!!
-  populateTransactions() {
-    this.setSinceDate();
-
+  /**
+   * Get any transactions already stored in localstorage and populate the state with them
+   * @return {[type]} [description]
+   */
+  fillTransactionsFromLocalStorage() {
+    // init empty array for used tx keys
     const usedTxKeys = [];
 
     // get the transactions from localstorage and update state with them
     if (localStorage.getItem('travelTransactions')) {
         const travelTransactionsFromStorage = JSON.parse(localStorage.getItem('travelTransactions'));
-        this.setState({
-            transactionsForTravel: travelTransactionsFromStorage,
-            travelTransactionsLastDate: JSON.parse(localStorage.getItem('travelTransactionsLastDate')),
-        });
 
+        // populate the used tx keys array
         travelTransactionsFromStorage.forEach(function(item) {
             usedTxKeys.push(item.id);
         });
 
+        // populate the state with the info we need
+        this.setState({
+            transactionsForTravel: travelTransactionsFromStorage,
+            travelTransactionsLastDate: JSON.parse(localStorage.getItem('travelTransactionsLastDate')),
+            usedTxKeys: usedTxKeys,
+        });
+
+        // recalculate the totals if we did detect some transactions in the state
         this.travelTotals();
     }
+  }
 
+  // this is a bit weird because we have to call the api once at a time...
+  // maybe do it by month instead?
+  // TODO: clean this up!!!
+  populateTransactions() {
     let self = this;
     // TODO: handle the 401 here, probably clear the credentials
     // and set the state back to isAuthorized: false, clear the old creds
     let transactionsLoop = async function () {
       let continueLoop = true;
-      let lastDate = self.state.travelTransactionsLastDate;
       while (continueLoop) {
-        const response = await fetch(self.generateTransactionUrl(lastDate), self.authParams());
-        const json = await response.json();
-        const transactions = json.transactions
+        const response = await fetch(self.generateTransactionUrl(self.state.travelTransactionsLastDate), self.authParams())
+          .then(function(response) {
+            if(response.status !== 200) {
+              // did not get a 200, log the user out
+              // TODO: some kind of error message?
+              self.logOut();
+            }
 
+            return response;
+          });
+
+        let transactions = [];
+
+        try {
+          const json = await response.json();
+          transactions = json.transactions;
+        } catch {
+          // most likely the user was already logged out...
+          console.log('error processing api response');
+        }
+
+        // todo: make this into a function that processes 'transactions'
         // so just get transport ones
         transactions.forEach(function(transaction) {
             if (transaction.category == 'transport' && transaction.description.toLowerCase().includes('tfl.gov.uk') && transaction.account_id == self.state.accountId) {
                 // only write out items that arent already from the localstorage
-                if (!usedTxKeys.includes(transaction.id)) {
+                if (!self.state.usedTxKeys.includes(transaction.id)) {
                     self.setState({
                         transactionsForTravel: [...self.state.transactionsForTravel, ...[{
                             // only take what is needed out of the transaction
@@ -423,7 +456,8 @@ class Home extends Component {
                             amount: transaction.amount,
                             created: transaction.created,
                             id: transaction.id
-                        }] ]
+                        }] ],
+                        travelTransactionsLastDate: transaction.created
                     });
 
                     // store the transactions in the browsers localstorage
@@ -433,8 +467,6 @@ class Home extends Component {
         });
 
         self.travelTotals();
-
-        lastDate = transactions[transactions.length-1].created;
 
         if (transactions.length < 100) {
           continueLoop = false;
@@ -452,7 +484,7 @@ class Home extends Component {
   storeTravelTransactions()
   {
     localStorage.setItem('travelTransactions', JSON.stringify(this.state.transactionsForTravel));
-    localStorage.setItem('travelTransactionsLastDate', JSON.stringify(this.state.transactionsForTravel[this.state.transactionsForTravel.length-1].created));
+    localStorage.setItem('travelTransactionsLastDate', JSON.stringify(this.state.travelTransactionsLastDate));
   }
 
   /**
