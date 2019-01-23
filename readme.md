@@ -4,7 +4,7 @@ https://londoncommute.uk
 
 ## What can this do?
 
-Checks your monzo transactions to see how much you waste on london transport (why don't you just [buy a bike](https://amzn.to/2RK1qCz) ?)
+Checks your monzo transactions to see how much you waste on london transport (why don't you just [buy a bike](https://amzn.to/2RK1qCz)?)
 
 ## How do I run it locally?
 ```
