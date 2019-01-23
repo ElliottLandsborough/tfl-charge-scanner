@@ -10,21 +10,38 @@ class MainController extends Controller
 {
     private $monzoAuth;
 
-    public function __construct()
+    /**
+     * Constructor
+     * @param MonzoAuth $monzoAuth The MonzoAuth object.
+     */
+    public function __construct(MonzoAuth $monzoAuth)
     {
-        $this->monzoAuth = new MonzoAuth(route('callback'));
+        $this->monzoAuth = $monzoAuth->setCallBackUrl(route('callback'));
     }
 
+    /**
+     * Home page
+     * @return Function view() Render the home view.
+     */
     public function home()
     {
         return view('pages.home', ['url' => url('/auth')]);
     }
 
+    /**
+     * Redirect a user to an auth url
+     * @return [Function] Redirect to auth url.
+     */
     public function authUrl()
     {
         return redirect($this->monzoAuth->generateAuthUrl());
     }
 
+    /**
+     * Callback url
+     * @param  Request $request
+     * @return Function redirect() Redirect to home
+     */
     public function callback(Request $request)
     {
         $credentials = $this->monzoAuth->setCredentialsFromCallback($request->query('state'), $request->query('code'))->getCredentials();
@@ -34,6 +51,11 @@ class MainController extends Controller
         return redirect('/');
     }
 
+    /**
+     * Returns the credentials in a json array
+     * @param  Request $request
+     * @return Function response() Returns json reponse object
+     */
     public function credentials(Request $request)
     {
         $array = [];
@@ -53,12 +75,17 @@ class MainController extends Controller
         return response()->json($array);
     }
 
+    /**
+     * Logs a user out
+     * @param  Request $request
+     * @return 200 response with json array
+     */
     public function logout(Request $request)
     {
         // remove all session vars
         $request->session()->forget('monzo_auth');
         $request->session()->flush();
 
-        return response()->json([]);
+        return response()->json(['status' => 'success']);
     }
 }
