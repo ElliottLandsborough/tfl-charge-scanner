@@ -3,6 +3,12 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const webpack = require('webpack');
 
 mix.webpackConfig({
+   'resolve': {
+     'alias': {
+       'react': 'preact-compat',
+       'react-dom': 'preact-compat',
+     },
+    },
   plugins: [
     new BundleAnalyzerPlugin(),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
