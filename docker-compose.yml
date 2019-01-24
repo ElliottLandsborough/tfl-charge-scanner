@@ -1,31 +1,10 @@
 version: '3'
 services:
-
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: digitalocean.com/php
-    container_name: app
-    restart: unless-stopped
-    tty: true
-    environment:
-      SERVICE_NAME: app
-      SERVICE_TAGS: dev
-    working_dir: /var/www
-    volumes:
-      - ./:/var/www
-      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
-    networks:
-      - app-network
-
   nginx:
     image: nginx:alpine
     container_name: nginx
     restart: unless-stopped
     tty: true
-#    depends_on:
-#      - redis
     ports:
       - "5678:80"
     volumes:
@@ -33,21 +12,22 @@ services:
       - ./nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - app-network
-
-#  redis:
-#    container_name: redis
-#    image: redis:alpine
-#    restart: always
-#    volumes:
-#      - redis_data:/data
-#    networks:
-#      - app-network
-#    ports:
-#      - "6379"
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: php:7-fpm-alpine
+    container_name: php
+    restart: unless-stopped
+    tty: true
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
 
 networks:
   app-network:
     driver: bridge
 
-#volumes:
-#  redis_data:
