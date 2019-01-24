@@ -17,7 +17,6 @@ To compile and watch dev assets:
 ```
 npm install
 npm run watch
-
 ```
 Or to compile production assets:
 ```
@@ -36,3 +35,4 @@ docker-compose up -d --build
 docker-compose down --remove-orphans
 docker attach 
 docker exec -it php sh
+```
