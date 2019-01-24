@@ -27,8 +27,7 @@ services:
 #    depends_on:
 #      - redis
     ports:
-      - "80:80"
-      - "443:443"
+      - "5678:80"
     volumes:
       - ./:/var/www
       - ./nginx/conf.d/:/etc/nginx/conf.d/
