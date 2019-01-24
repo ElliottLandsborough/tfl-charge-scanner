@@ -35,4 +35,4 @@ docker container ls
 docker-compose up -d --build
 docker-compose down --remove-orphans
 docker attach 
-docker exec -it app /bin/bash
+docker exec -it php sh
