@@ -23,7 +23,3 @@ Or to compile production assets:
 ```
 npm run prod
 ```
-
-## To do list
- - dockerize
- - deployment
