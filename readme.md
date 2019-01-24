@@ -23,3 +23,16 @@ Or to compile production assets:
 ```
 npm run prod
 ```
+
+## How do I run it with docker?
+```
+docker-compose up -d
+```
+
+## Notes
+```
+docker container ls
+docker-compose up -d --build
+docker-compose down --remove-orphans
+docker attach 
+docker exec -it app /bin/bash

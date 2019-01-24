@@ -20,6 +20,11 @@ RUN apt-get update && apt-get install -y \
     git \
     curl
 
+# v8js - currently too niche for alpine
+#RUN apt-get install -y libv8-dev
+#RUN pecl install v8js \
+#    && docker-php-ext-enable v8js
+
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
