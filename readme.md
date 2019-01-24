@@ -25,6 +25,5 @@ npm run prod
 ```
 
 ## To do list
- - refactor js api loop function
  - dockerize
  - deployment

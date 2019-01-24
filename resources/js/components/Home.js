@@ -412,6 +412,15 @@ class Home extends Component {
     }
   }
 
+  /**
+   * Sleep function, mostly used for debugging purposes e.g 'await sleep(200)'
+   * @param  {Integer} ms The number of ms to sleep
+   * @return {Promise}
+   */
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   // this is a bit weird because we have to call the api once at a time...
   // maybe do it by month instead?
   // TODO: clean this up!!!
@@ -421,7 +430,7 @@ class Home extends Component {
     // and set the state back to isAuthorized: false, clear the old creds
     let transactionsLoop = async function () {
       let continueLoop = true;
-      while (continueLoop) {
+      while (continueLoop && self.state.accessToken !== false) {
         const response = await fetch(self.generateTransactionUrl(self.state.travelTransactionsLastDate), self.authParams())
           .then(function(response) {
             if(response.status !== 200) {
@@ -433,49 +442,79 @@ class Home extends Component {
             return response;
           });
 
-        let transactions = [];
-
         try {
           const json = await response.json();
-          transactions = json.transactions;
+          const transactions = json.transactions;
+
+          self.processApiTransactions(transactions);
+
+          // if the there were less than 100 transactions in the response
+          if (transactions.length < 100) {
+            // stop the loop
+            continueLoop = false;
+            // loading is complete
+            self.setState({loadingIsComplete: true});
+          }
         } catch {
           // most likely the user was already logged out...
           console.log('error processing api response');
-        }
-
-        // todo: make this into a function that processes 'transactions'
-        // so just get transport ones
-        transactions.forEach(function(transaction) {
-            if (transaction.category == 'transport' && transaction.description.toLowerCase().includes('tfl.gov.uk') && transaction.account_id == self.state.accountId) {
-                // only write out items that arent already from the localstorage
-                if (!self.state.usedTxKeys.includes(transaction.id)) {
-                    self.setState({
-                        transactionsForTravel: [...self.state.transactionsForTravel, ...[{
-                            // only take what is needed out of the transaction
-                            account_id: transaction.account_id,
-                            amount: transaction.amount,
-                            created: transaction.created,
-                            id: transaction.id
-                        }] ],
-                        travelTransactionsLastDate: transaction.created
-                    });
-
-                    // store the transactions in the browsers localstorage
-                    self.storeTravelTransactions();
-                }
-            }
-        });
-
-        self.travelTotals();
-
-        if (transactions.length < 100) {
+          // stop the loop
           continueLoop = false;
-          self.setState({loadingIsComplete: true});
         }
       }
     }
 
     transactionsLoop();
+  }
+
+  // detect a tfl transaction
+  isTflTransaction(transaction) {
+    return (transaction.category == 'transport' && transaction.description.toLowerCase().includes('tfl.gov.uk'));
+  }
+
+  // check if transaction has already been processed
+  transactionHasBeenProcessed(transaction) {
+    return (self.state.usedTxKeys.includes(transaction.id))
+  }
+
+  // check if transaction matches account it
+  transactionMatchesAccount(transaction) {
+    return (transaction.account_id == self.state.accountId);
+  }
+
+  /**
+   * Process transactions from the api
+   * @param  {} transactions Straight from the api
+   * @return {} filtered travel transactions
+   */
+  processApiTransactions(transactions) {
+    self = this;
+    transactions.forEach(function(transaction) {
+      // detect tfl transactions
+      if (!self.transactionHasBeenProcessed(transaction) && self.transactionMatchesAccount(transaction) && self.isTflTransaction(transaction)) {
+        self.setState({
+          transactionsForTravel: [...self.state.transactionsForTravel, ...[{
+            // only take what is needed out of the transaction
+            account_id: transaction.account_id,
+            amount: transaction.amount,
+            created: transaction.created,
+            id: transaction.id
+          }] ]
+        });
+
+        // store the transactions in the browsers localstorage
+        self.storeTravelTransactions();
+      }
+      // make sure we record the date of the last processed transaction
+      self.setState({
+        travelTransactionsLastDate: transaction.created
+      });
+    });
+
+    // recalculate the totals
+    self.travelTotals();
+
+    return self.state.transactionsForTravel;
   }
 
   /**
@@ -555,16 +594,18 @@ class Home extends Component {
    * @return {[type]} [description]
    */
   logOut() {
-    // async get all logout urls, no need to process response
-    fetch(this.state.monzoApi + '/oauth2/logout', this.authParams('POST')); // log out of monzo api
+    const { accessToken } = this.state;
+    // can only log out if we have an access token
+    if (accessToken !== false) {
+        // async get all logout urls, no need to process response
+        fetch(this.state.monzoApi + '/oauth2/logout', this.authParams('POST')); // log out of monzo api
+    }
     fetch('/logout'); // log out of laravels everything
 
     // reset state to initial values
     this.setState(this.initialState());
 
     // clear localstorage
-    //localStorage.setItem('travelTransactions', JSON.stringify([]));
-    //localStorage.setItem('travelTransactionsLastDate', JSON.stringify(false));
     localStorage.clear();
   }
 
