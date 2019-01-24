@@ -1,7 +1,6 @@
 version: '3'
 services:
 
-  #PHP Service
   app:
     build:
       context: .
@@ -20,12 +19,13 @@ services:
     networks:
       - app-network
 
-  #Nginx Service
-  webserver:
+  nginx:
     image: nginx:alpine
-    container_name: webserver
+    container_name: nginx
     restart: unless-stopped
     tty: true
+#    depends_on:
+#      - redis
     ports:
       - "80:80"
       - "443:443"
@@ -35,30 +35,20 @@ services:
     networks:
       - app-network
 
-  #MySQL Service
-  #db:
-  #  image: mysql:5.7.22
-  #  container_name: db
-  #  restart: unless-stopped
-  #  tty: true
-  #  ports:
-  #    - "3306:3306"
-  #  environment:
-  #    MYSQL_DATABASE: laravel
-  #    MYSQL_ROOT_PASSWORD: your_mysql_root_password
-  #    SERVICE_TAGS: dev
-  #    SERVICE_NAME: mysql
-  #  volumes:
-  #    - dbdata:/var/lib/mysql
-  #    - ./mysql/my.cnf:/etc/mysql/my.cnf
-  #  networks:
-  #    - app-network
+#  redis:
+#    container_name: redis
+#    image: redis:alpine
+#    restart: always
+#    volumes:
+#      - redis_data:/data
+#    networks:
+#      - app-network
+#    ports:
+#      - "6379"
 
-#Docker Networks
 networks:
   app-network:
     driver: bridge
-#Volumes
+
 #volumes:
-#  dbdata:
-#    driver: local
+#  redis_data:
