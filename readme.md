@@ -37,6 +37,12 @@ docker attach
 docker exec -it monzo_balance_php_1 sh
 docker system prune -a
 ```
+
+Purge then build
+```
+docker-compose down --remove-orphans; docker system prune -a -f; docker volume prune -f; docker-compose up -d --build;
+```
+
 Module examples
 ```
 # install nginx, php, and php extensions for Craft
