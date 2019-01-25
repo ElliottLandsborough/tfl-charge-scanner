@@ -29,8 +29,6 @@ COPY --from=vendor /app/vendor/ /var/www/html/vendor/
 COPY --from=frontend /public/js/ /var/www/html/public/js/
 COPY --from=frontend /public/css/ /var/www/html/public/css/
 
-COPY --from=frontend /mix-manifest.json /var/www/html/public/mix-manifest.json
-
 # change uid and gid for www-data user (alpine)
 RUN apk --no-cache add shadow && \
     usermod -u 1000 www-data && \
