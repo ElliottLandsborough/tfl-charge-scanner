@@ -36,4 +36,10 @@ RUN apk --no-cache add shadow && \
 
 WORKDIR /var/www/html
 
+RUN php artisan optimize
+RUN php artisan cache:clear
+RUN php artisan route:cache
+RUN php artisan view:clear
+RUN php artisan config:cache
+
 RUN chgrp -R www-data /var/www/html/storage /var/www/html/bootstrap/cache && chmod -R ug+rwx /var/www/html/storage /var/www/html/bootstrap/cache
