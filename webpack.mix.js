@@ -27,6 +27,17 @@ mix.webpackConfig({
  |
  */
 
+mix.options({
+    postCss: [
+        require('postcss-discard-comments')({
+            removeAll: true
+        })
+    ],
+    uglify: {
+        comments: false
+    }
+});
+
 mix.react('resources/js/app.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css');
 
