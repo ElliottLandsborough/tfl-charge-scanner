@@ -12,5 +12,5 @@
 
 <link rel="apple-touch-icon" href="icon.png">
 
-<link href="{{ asset('css/app.css') }}" rel="stylesheet">
+<link href="{{ asset('css/app.css') }}?timehash={{ hash('crc32', filemtime(public_path('css/app.css')), false) }}" rel="stylesheet">
 <meta name="csrf-token" content="{{ csrf_token() }}">
