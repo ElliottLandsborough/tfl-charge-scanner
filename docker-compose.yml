@@ -2,7 +2,7 @@ version: '3'
 services:
   nginx:
     image: nginx:alpine
-    container_name: nginx
+    container_name: monzo_balance_nginx_1
     restart: unless-stopped
     tty: true
     ports:
@@ -17,7 +17,7 @@ services:
       context: .
       dockerfile: Dockerfile
     image: php:7-fpm-alpine
-    container_name: php
+    container_name: monzo_balance_php_1
     restart: unless-stopped
     tty: true
     working_dir: /var/www
