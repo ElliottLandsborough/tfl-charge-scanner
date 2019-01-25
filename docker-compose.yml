@@ -8,21 +8,20 @@ services:
     ports:
       - "5678:80"
     volumes:
-      - ./:/var/www
+      - webroot:/var/www
       - ./nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - app-network
   php:
     build:
-      context: .
+      context: ./
       dockerfile: Dockerfile
     image: php:7-fpm-alpine
     container_name: monzo_balance_php_1
     restart: unless-stopped
     tty: true
-    working_dir: /var/www
     volumes:
-      - ./:/var/www
+      - webroot:/var/www
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - app-network
@@ -31,3 +30,5 @@ networks:
   app-network:
     driver: bridge
 
+volumes:
+  webroot:
