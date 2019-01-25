@@ -1,9 +1,9 @@
 #.env
 .git/
-#vendor/
+vendor/
 node_modules/
-#public/js/
-#public/css/
+public/js/
+public/css/
 storage/framework/cache/**
 storage/framework/sessions/**
 storage/framework/views/**
