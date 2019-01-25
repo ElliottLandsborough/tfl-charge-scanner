@@ -35,4 +35,5 @@ docker-compose up -d --build
 docker-compose down --remove-orphans
 docker attach 
 docker exec -it php sh
+docker system prune -a
 ```
