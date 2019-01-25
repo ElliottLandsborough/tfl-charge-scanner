@@ -8,7 +8,7 @@ services:
     ports:
       - "5678:80"
     volumes:
-      - webroot:/var/www
+      - ./:/var/www/html
       - ./nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - app-network
@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
     tty: true
     volumes:
-      - webroot:/var/www
+      - ./:/var/www/html
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - app-network
@@ -29,6 +29,3 @@ services:
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  webroot:
