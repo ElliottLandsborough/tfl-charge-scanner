@@ -5,21 +5,13 @@ RUN apk --no-cache add shadow && \
     usermod -u 1000 www-data && \
     groupmod -g 1000 www-data
 
-# Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# composer
+FROM composer:latest as vendor
 
-# Copy composer.lock and composer.json
-COPY composer.lock composer.json /var/www/
+COPY database/ database/
 
-# Fix perms before running build commands
-RUN mkdir -p /var/www \
- && chown -R www-data:www-data /var/www
-
-# Change current user to www-data
-USER www-data
-
-# Set working directory
-WORKDIR /var/www
+COPY composer.json composer.json
+COPY composer.lock composer.lock
 
 RUN composer install \
     --ignore-platform-reqs \
@@ -28,3 +20,14 @@ RUN composer install \
     --no-scripts \
     --prefer-dist
 
+# build css & js
+FROM node:current-alpine as frontend
+
+RUN mkdir -p ./public/css
+
+COPY package.json webpack.mix.js ./
+COPY resources/ resources/
+
+WORKDIR ./
+
+RUN npm install --production && npm run prod
