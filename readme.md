@@ -11,7 +11,7 @@ Checks your monzo transactions to see how much you waste on london transport (wh
 git clone git@github.com:ElliottLandsborough/monzo-balance.git
 cd monzo-balance
 composer install
-php artisan serve
+php artisan serve --port=5678
 ```
 To compile and watch dev assets:
 ```
