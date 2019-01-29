@@ -210,8 +210,8 @@ class MonzoAuth
         // set some params
         $formParams = [
             'grant_type' => 'refresh_token',
-            'client_id' => env('MONZO_CLIENT_ID'),
-            'client_secret' => env('MONZO_CLIENT_SECRET'),
+            'client_id' => $this->apiClientId,
+            'client_secret' => $this->apiSecret,
             'refresh_token' => $this->credentials->refresh_token
         ];
 
