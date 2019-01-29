@@ -16,7 +16,11 @@ class MainController extends Controller
      */
     public function __construct(MonzoAuth $monzoAuth)
     {
-        $this->monzoAuth = $monzoAuth->setCallBackUrl(route('callback'));
+        // get vars from config
+        $apiClientId = config('monzo.apiClientId');
+        $apiSecret = config('monzo.apiSecret');
+
+        $this->monzoAuth = $monzoAuth->setCallBackUrl(route('callback'))->setApiClientId($apiClientId)->setApiSecret($apiSecret);
     }
 
     /**

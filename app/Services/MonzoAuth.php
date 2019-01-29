@@ -16,6 +16,8 @@ class MonzoAuth
 {
     private $callBackUrl;
     private $credentials;
+    private $apiClientId;
+    private $apiSecret;
 
     /**
      * Make callbackurl settable by public
@@ -25,6 +27,28 @@ class MonzoAuth
     public function setCallBackUrl(string $url)
     {
         $this->callBackUrl = $url;
+
+        return $this;
+    }
+
+    /**
+     * Make api client id settable by public
+     * @param string $apiClientId The api client id
+     */
+    public function setApiClientId(string $apiClientId)
+    {
+        $this->apiClientId = $apiClientId;
+
+        return $this;
+    }
+
+    /**
+     * Make api secret settable by public
+     * @param string $apiSecret The api secret
+     */
+    public function setApiSecret(string $apiSecret)
+    {
+        $this->apiSecret = $apiSecret;
 
         return $this;
     }
@@ -65,7 +89,7 @@ class MonzoAuth
 
         $urlString = 'https://auth.monzo.com/';
         $urlParams = [
-            'client_id' => env('MONZO_CLIENT_ID'),
+            'client_id' => $this->apiClientId,
             'redirect_uri' => $this->callBackUrl,
             'response_type' => 'code',
             'state' => $state
@@ -119,8 +143,8 @@ class MonzoAuth
         // what we need to send to the monzo api
         $formParams = [
             'grant_type' => 'authorization_code',
-            'client_id' => env('MONZO_CLIENT_ID'),
-            'client_secret' => env('MONZO_CLIENT_SECRET'),
+            'client_id' => $this->apiClientId,
+            'client_secret' => $this->apiSecret,
             'redirect_uri' => $this->callBackUrl,
             'code' => $code
         ];
