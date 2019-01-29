@@ -43,16 +43,7 @@ class GraphAmounts extends Component {
     const barChartData = {
         labels: labels,
         datasets: [{
-          label: 'Average Monzo Price',
-          data: monzoPrices,
-          type: 'line',
-          //showLine: false
-          fill: false,
-          backgroundColor: '#eee',
-          borderColor: '#aaa',
-          borderWidth: 1
-        },{
-          label: 'TFL Price',
+          label: 'TFL per month',
           data: tflPrices,
           type: 'line',
           //showLine: false
@@ -61,7 +52,7 @@ class GraphAmounts extends Component {
           borderColor: '#1189cc',
           borderWidth: 1
         },{
-          label: 'Commuter Club Price',
+          label: 'Commuter Club per month',
           data: clubPrices,
           type: 'line',
           //showLine: false
@@ -69,9 +60,17 @@ class GraphAmounts extends Component {
           backgroundColor: '#e6fffd',
           borderColor: '#00a9a1',
           borderWidth: 1
-        },
-        {
-          label: 'Monzo Payments',
+        },{
+          label: 'Average Monzo per month',
+          data: monzoPrices,
+          type: 'line',
+          //showLine: false
+          fill: false,
+          backgroundColor: '#eee',
+          borderColor: '#aaa',
+          borderWidth: 1
+        },{
+          label: 'Monzo payments',
           data: monzoPayments,
           backgroundColor: '#fee6e8',
           borderColor: '#fd3a4a',
