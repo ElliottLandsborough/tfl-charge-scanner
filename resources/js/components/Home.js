@@ -623,7 +623,7 @@ class Home extends Component {
       return (
         <div>
           <Loader daysPercentage={this.getDaysPercentage()} loadingIsComplete={this.state.loadingIsComplete} />
-          <GraphAmounts yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} yearMonths={this.state.yearMonths} />
+          <GraphAmounts yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} yearMonths={this.state.yearMonths} monzoMonthlyAverage={this.getMonzoMonthlyAverage()} />
           <div className="zone-selector">
             From zone
             <select id="zoneFromSelector" className="form-control" onChange={this.setFromZone} value={this.state.fromZone}>

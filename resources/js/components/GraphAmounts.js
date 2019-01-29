@@ -25,6 +25,7 @@ class GraphAmounts extends Component {
     let monzoPayments = [];
     let tflPrices = [];
     let clubPrices = [];
+    let monzoPrices = [];
 
     let yealyAmount = (self.props.yearlyAmount / 12).toFixed(2);
     let clubAmount = (self.props.clubAmount / 12).toFixed(2);
@@ -36,11 +37,21 @@ class GraphAmounts extends Component {
       monzoPayments.push(self.travelTotalPositiveInteger(self.props.yearMonths[value]));
       tflPrices.push(yealyAmount);
       clubPrices.push(clubAmount);
+      monzoPrices.push(self.props.monzoMonthlyAverage);
     });
 
     const barChartData = {
         labels: labels,
         datasets: [{
+          label: 'Average Monzo Price',
+          data: monzoPrices,
+          type: 'line',
+          //showLine: false
+          fill: false,
+          backgroundColor: '#eee',
+          borderColor: '#aaa',
+          borderWidth: 1
+        },{
           label: 'TFL Price',
           data: tflPrices,
           type: 'line',
