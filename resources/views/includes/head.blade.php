@@ -26,13 +26,13 @@ $description = 'Check your monzo account for London transport charges';
 <meta name="twitter:description" content="{!! $description !!}">
 <meta name="twitter:creator" content="@elliottlan">
 {{-- Twitter summary card with large image must be at least 280x150px --}}
-<meta name="twitter:image:src" content="{!! url('/img/preview.1200x675.png') !!}">
+<meta name="twitter:image:src" content="{!! url('/img/preview.1200x675.png?bust=201904301033') !!}">
 
 {{-- Open Graph data --}}
 <meta property="og:title" content="{!! $title !!}" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="{!! url('/') !!}" />
-<meta property="og:image" content="{!! url('/img/preview.1200x630.png') !!}" />
+<meta property="og:image" content="{!! url('/img/preview.1200x630.png?bust=201904301033') !!}" />
 <meta property="og:description" content="{!! $description !!}" />
 <meta property="og:site_name" content="LondonCommute.uk" />
 {{--<meta property="fb:admins" content="Facebook numberic ID" />--}}
