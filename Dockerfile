@@ -9,7 +9,8 @@ RUN composer install \
     --no-interaction \
     --no-plugins \
     --no-scripts \
-    --prefer-dist
+    --prefer-dist \
+    --no-dev
 
 # build css & js
 FROM node:current-alpine as frontend
