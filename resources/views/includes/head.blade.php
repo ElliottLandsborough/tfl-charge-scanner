@@ -14,8 +14,8 @@ $description = 'Check your monzo account for London transport charges';
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<link rel="shortcut icon" href="{!! url('/favicon.png?bust=201904301033') !!}">
-<link rel="apple-touch-icon" href="{!! url('/favicon.png?bust=201904301033') !!}">
+<link rel="shortcut icon" href="{!! url('/favicon.png?bust=201904301200') !!}">
+<link rel="apple-touch-icon" href="{!! url('/favicon.png?bust=201904301200') !!}">
 
 <link href="{{ asset('css/app.css') }}?timehash={{ hash('crc32', filemtime(public_path('css/app.css')), false) }}" rel="stylesheet">
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -27,7 +27,7 @@ $description = 'Check your monzo account for London transport charges';
 <meta name="twitter:description" content="{!! $description !!}">
 <meta name="twitter:creator" content="@elliottlan">
 {{-- Twitter summary card with large image must be at least 280x150px --}}
-<meta name="twitter:image:src" content="{!! url('/img/preview.1200x675.png?bust=201904301033') !!}">
+<meta name="twitter:image:src" content="{!! url('/img/preview.1200x675.png?bust=201904301200') !!}">
 
 {{-- Open Graph data --}}
 <meta property="og:title" content="{!! $title !!}" />
