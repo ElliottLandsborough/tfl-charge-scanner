@@ -4,7 +4,7 @@ https://londoncommute.uk
 
 ## What?
 
-Checks your monzo transactions to see how much you waste on London transport (why don't you just [buy a bike](https://amzn.to/2RK1qCz)?)
+Checks your monzo transactions to see how much you waste on London transport (Have you considered buying a [bicycle from Amazon](https://amzn.to/2RK1qCz)?)
 
 ## Why?
 
