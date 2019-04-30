@@ -84,10 +84,14 @@
     margin-top: 80px;
     margin-bottom: 80px;
     p {
-        max-width: 400px;
+        max-width: 500px;
         width: 95%;
         margin: 0 auto;
         text-align: center;
+        font-weight: bold;
+        a {
+            color: #fd3a4a;
+        }
     }
     .auth-button {
         -moz-border-radius:5px;

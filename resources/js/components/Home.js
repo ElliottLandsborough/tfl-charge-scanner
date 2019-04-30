@@ -618,7 +618,7 @@ class Home extends Component {
       return (
         <div class="guest-container">
           <p><a className='auth-button' href='/auth'>Authorize with Monzo</a></p>
-          <p>Click the button to scan your Monzo account for payments made to Transport For London over the past year.</p>
+          <p>This app makes a graph of how much money you spend on the London transport system per month. Please <a href="/auth">authorize with Monzo</a> to continue.</p>
         </div>
       );
     } else {
