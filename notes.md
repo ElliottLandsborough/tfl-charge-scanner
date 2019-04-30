@@ -55,3 +55,7 @@ RUN apk add --no-cache \
 
 CMD sh
 ```
+## Start fake production?
+```
+git fetch origin; git reset --hard origin/master; docker-compose down --remove-orphans; docker system prune -a -f; docker volume prune -f; docker-compose up -d --build;
+```
