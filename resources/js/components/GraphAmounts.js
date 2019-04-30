@@ -10,6 +10,14 @@ class GraphAmounts extends Component {
 
   constructor(props) {
     super(props);
+
+    /*
+    // bind 'this' to a few functions
+    this.updateDimensions = this.updateDimensions.bind(this);
+    this.componentWillMount = this.componentWillMount.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.componentWillUnmount = this.componentWillUnmount.bind(this);
+    */
   }
 
   // invert number and convert pence to pounds
@@ -81,9 +89,34 @@ class GraphAmounts extends Component {
     return barChartData;
   }
 
+  /*
+  updateDimensions() {
+    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    this.setState({width: w, height: h});
+  }
+
+  componentWillMount() {
+    this.updateDimensions();
+  }
+
+  componentDidMount() {
+    window.addEventListener("resize", this.updateDimensions);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions);
+  }
+  */
+
   render() {
     const chartData = this.barChartData();
     const chartOptions = {
+      maintainAspectRatio: false,    // Don't maintain w/h ratio
+      responsive: true,
+      onResize: function() {
+        console.log('1');
+      },
       scales: {
         yAxes: [{
           display: true,
@@ -113,10 +146,10 @@ class GraphAmounts extends Component {
         }
       }
     };
-    const {height, width, id} = this.props;
+    //const {height, width, id} = this.props;
     return (
       <div className="price-graph">
-        <Bar data={chartData} options={chartOptions}/>
+        <Bar data={chartData} options={chartOptions} />
       </div>
     )
   }

@@ -158,7 +158,8 @@
     max-width: 1200px;
     width: 95% !important;
     margin: 20px auto;
-    position: relative;
+    /*position: relative;*/
+    min-height: 350px;
 }
 
 .progress {
