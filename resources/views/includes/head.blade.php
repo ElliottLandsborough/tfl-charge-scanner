@@ -14,8 +14,8 @@ $description = 'Check your monzo account for London transport charges';
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<link rel="shortcut icon" href="{!! url('/favicon.png?bust=201904301200') !!}">
-<link rel="apple-touch-icon" href="{!! url('/favicon.png?bust=201904301200') !!}">
+<link rel="shortcut icon" href="{!! url('/favicon.png?bust=201904301207') !!}">
+<link rel="apple-touch-icon" href="{!! url('/favicon.png?bust=201904301207') !!}">
 
 <link href="{{ asset('css/app.css') }}?timehash={{ hash('crc32', filemtime(public_path('css/app.css')), false) }}" rel="stylesheet">
 <meta name="csrf-token" content="{{ csrf_token() }}">
