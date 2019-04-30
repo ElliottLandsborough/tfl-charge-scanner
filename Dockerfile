@@ -37,10 +37,10 @@ RUN apk --no-cache add shadow && \
 
 WORKDIR /var/www/html
 
-RUN /usr/local/bin/php /var/www/html/artisan optimize
+RUN /usr/local/bin/php /var/www/html/artisan config:clear
+RUN /usr/local/bin/php /var/www/html/artisan view:clear
 RUN /usr/local/bin/php /var/www/html/artisan cache:clear
 RUN /usr/local/bin/php /var/www/html/artisan route:cache
-RUN /usr/local/bin/php /var/www/html/artisan view:clear
 RUN /usr/local/bin/php /var/www/html/artisan config:cache
 
 RUN chgrp -R www-data /var/www/html/storage /var/www/html/bootstrap/cache && chmod -R ug+rwx /var/www/html/storage /var/www/html/bootstrap/cache
