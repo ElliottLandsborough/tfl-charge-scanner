@@ -2,11 +2,15 @@
 
 https://londoncommute.uk
 
-## What can this do?
+## What?
 
 Checks your monzo transactions to see how much you waste on London transport (why don't you just [buy a bike](https://amzn.to/2RK1qCz)?)
 
-## How do I run it locally?
+## Why?
+
+...
+
+## How?
 ```
 git clone git@github.com:ElliottLandsborough/monzo-balance.git
 cd monzo-balance
@@ -23,7 +27,7 @@ Or to compile production assets:
 npm run prod
 ```
 
-## How do I run it with docker?
+## How with docker?
 ```
 docker-compose up -d
 ```
