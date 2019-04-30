@@ -615,7 +615,12 @@ class Home extends Component {
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isAuthorized) {
-      return <a className='auth-button' href='/auth'>Authorize with Monzo</a>;
+      return (
+        <div class="guest-container">
+          <p><a className='auth-button' href='/auth'>Authorize with Monzo</a></p>
+          <p>Click the button to scan your Monzo account for payments made to Transport For London over the past year.</p>
+        </div>
+      );
     } else {
       const tflZones = [1,2,3,4,5,6,7,8,9].map((num) =>
         <option key={num} value={num}>{num}</option>
