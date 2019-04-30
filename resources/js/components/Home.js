@@ -1,6 +1,6 @@
 // resources/assets/js/components/Home.js
 
-import React, {Component} from 'react';
+import React, {Component} from 'react'
 import { Link } from 'react-router-dom'
 import GraphAmounts from './GraphAmounts'
 import TflAmount from './TflAmount'
@@ -10,6 +10,7 @@ import dateSubMonths from 'date-fns/sub_months'
 import dateFormat from 'date-fns/format'
 import dateParse from 'date-fns/parse'
 import dateDiffInDays from 'date-fns/difference_in_days'
+import isAfter from 'date-fns/is_after'
 
 class Home extends Component {
 
@@ -532,6 +533,7 @@ class Home extends Component {
    */
   travelTotals() {
     // some defaults
+    let self = this;
     let yearAverages = {};
     let yearTotals = {};
     let yearMonths = {};
@@ -539,24 +541,33 @@ class Home extends Component {
 
     // loop through all transactions
     this.state.transactionsForTravel.forEach(function(transaction) {
-      const amount = transaction.amount;
-      const month = transaction.created.substr(5,2);
-      const year = transaction.created.substr(0,4);
+      // did this transaction happen after the 'since' date?
+      const transactionIsAfterSinceDate = isAfter(
+        dateParse(transaction.created),
+        dateParse(self.state.sinceDate)
+      );
 
-      // total per year, initialize as 0 if it doesnt exist yet
-      if (typeof yearTotals[year] == "undefined") yearTotals[year] = 0;
-      yearTotals[year] += amount;
+      // this check stops transactions in localstorage from before the since date being processed
+      if (transactionIsAfterSinceDate) {
+          const amount = transaction.amount;
+          const month = transaction.created.substr(5,2);
+          const year = transaction.created.substr(0,4);
 
-      // average per year, initialize as 0 if it doesnt exist yet
-      if (typeof yearAverages[year] == "undefined") yearAverages[year] = 0;
-      yearAverages[year] += Math.round(amount / 12);
+          // total per year, initialize as 0 if it doesnt exist yet
+          if (typeof yearTotals[year] == "undefined") yearTotals[year] = 0;
+          yearTotals[year] += amount;
 
-      // total per yearMonth initialize as 0 if it doesnt exist yet
-      if (typeof yearMonths['' + year + month] == "undefined") yearMonths['' + year + month] = 0;
-      yearMonths['' + year + month] += amount;
+          // average per year, initialize as 0 if it doesnt exist yet
+          if (typeof yearAverages[year] == "undefined") yearAverages[year] = 0;
+          yearAverages[year] += Math.round(amount / 12);
 
-      // total of everything
-      fullTotal += amount;
+          // total per yearMonth initialize as 0 if it doesnt exist yet
+          if (typeof yearMonths['' + year + month] == "undefined") yearMonths['' + year + month] = 0;
+          yearMonths['' + year + month] += amount;
+
+          // total of everything
+          fullTotal += amount;
+      }
     });
 
     // add all calculations to the state
