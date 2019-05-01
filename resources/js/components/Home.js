@@ -628,8 +628,9 @@ class Home extends Component {
     } else if (!isAuthorized) {
       return (
         <div class="guest-container">
-          <p><a className='auth-button' href='/auth'>Authorize with Monzo</a></p>
-          <p>This app makes a graph of your monthly spend on the London transport system. Please <a href="/auth">authorize with Monzo</a> to continue.</p>
+          <p><a className='auth-button monzo' href='/auth/monzo'>Authorize with Monzo</a></p>
+          <p><a className='auth-button starling' href='/auth/starling'>Authorize with Starling</a></p>
+          <p>This app makes a graph of your monthly spend on the London transport system. Please authorize to continue.</p>
         </div>
       );
     } else {

@@ -12,7 +12,15 @@
 */
 
 Route::get('/', 'MainController@home')->name('home');
-Route::get('/auth', 'MainController@authUrl');
-Route::get('/callback', 'MainController@callback')->name('callback');
-Route::get('/credentials', 'MainController@credentials')->name('credentials');
 Route::get('/logout', 'MainController@logout')->name('logout');
+Route::get('/credentials', 'MainController@credentials')->name('credentials');
+
+// monzo
+Route::get('/auth/monzo', 'MonzoController@authUrl')->name('auth.monzo');
+Route::get('/callback/monzo', 'MonzoController@callback')->name('callback.monzo');
+Route::get('/credentials/monzo', 'MonzoController@credentials')->name('credentials.monzo');
+
+// starling
+Route::get('/auth/starling', 'StarlingController@authUrl')->name('auth.starling');
+Route::get('/callback/starling', 'StarlingController@callback')->name('callback.starling');
+Route::get('/credentials/starling', 'StarlingController@credentials')->name('credentials.starling');
