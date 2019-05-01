@@ -2,6 +2,7 @@
 
 import React, {Component} from 'react'
 import { Link } from 'react-router-dom'
+import Monzo from '../classes/banks/monzo'
 import GraphAmounts from './GraphAmounts'
 import TflAmount from './TflAmount'
 import Loader from './Loader'
@@ -38,6 +39,7 @@ class Home extends Component {
   initialState() {
     return {
       monzoApi: 'https://api.monzo.com', // monzo api url
+      currentBank: false,
       error: null, // in case an error happens
       isAuthorized: false, // becomes true if an auth token exists
       accessToken: false, // the access token returned from the api
@@ -155,14 +157,16 @@ class Home extends Component {
    * @return {[type]} [description]
    */
   componentDidMount() {
+    let m = new Monzo();
+    m.whatami();
     // make sure the state contains the default amounts
     this.setAmounts();
 
-    // initialize auth, get an access token from laravel
-    this.initializeAuthentication();
-
     // set the since date in the state
     this.setSinceDate();
+
+    // initialize auth, get an access token from laravel
+    this.initializeAuthentication();
   }
 
   /**
@@ -179,7 +183,8 @@ class Home extends Component {
           if (howManyItems) {
             this.setState({
                 isAuthorized: true,
-                accessToken: result.access_token
+                accessToken: result.access_token,
+                currentBank: result.current_bank
             });
           }
           return howManyItems;
