@@ -352,61 +352,6 @@ class Home extends Component {
     }
   }
 
-  /**
-   * Sleep function, mostly used for debugging purposes e.g 'await sleep(200)'
-   * @param  {Integer} ms The number of ms to sleep
-   * @return {Promise}
-   */
-  sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  // this is a bit weird because we have to call the api once at a time...
-  // maybe do it by month instead?
-  // TODO: clean this up!!!
-  populateTransactions() {
-    let self = this;
-    // TODO: handle the 401 here, probably clear the credentials
-    // and set the state back to isAuthorized: false, clear the old creds
-    let transactionsLoop = async function () {
-      let continueLoop = true;
-      while (continueLoop && self.state.accessToken !== false) {
-        const response = await fetch(self.generateTransactionUrl(self.state.travelTransactionsLastDate), self.authParams())
-          .then(function(response) {
-            if(response.status !== 200) {
-              // did not get a 200, log the user out
-              // TODO: some kind of error message?
-              self.logOut();
-            }
-
-            return response;
-          });
-
-        try {
-          const json = await response.json();
-          const transactions = json.transactions;
-
-          self.processApiTransactions(transactions);
-
-          // if the there were less than 100 transactions in the response
-          if (transactions.length < 100) {
-            // stop the loop
-            continueLoop = false;
-            // loading is complete
-            self.setState({loadingIsComplete: true});
-          }
-        } catch {
-          // most likely the user was already logged out...
-          console.log('error processing api response');
-          // stop the loop
-          continueLoop = false;
-        }
-      }
-    }
-
-    transactionsLoop();
-  }
-
   // detect a tfl transaction
   isTflTransaction(transaction) {
     return (transaction.category == 'transport' && transaction.description.toLowerCase().includes('tfl.gov.uk'));

@@ -6,6 +6,15 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import Header from './Header'
 import Home from './Home'
 
+/**
+ * Sleep function, mostly used for debugging purposes e.g 'await sleep(200)'
+ * @param  {Integer} ms The number of ms to sleep
+ * @return {Promise}
+ */
+sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 class App extends Component {
   render () {
     return (
