@@ -3,6 +3,7 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router-dom'
 import Monzo from '../classes/banks/monzo'
+import Starling from '../classes/banks/starling'
 import GraphAmounts from './GraphAmounts'
 import TflAmount from './TflAmount'
 import Loader from './Loader'
@@ -38,13 +39,10 @@ class Home extends Component {
    */
   initialState() {
     return {
-      monzoApi: 'https://api.monzo.com', // monzo api url
       currentBank: false,
       error: null, // in case an error happens
       isAuthorized: false, // becomes true if an auth token exists
       accessToken: false, // the access token returned from the api
-      accounts: [], // the accounts returned by the api
-      accountId: false, // the 'retail_uk' account id
       transactionsForTravel: [], // transactions used for TFL travel
       travelTransactionsLastDate: false, // the date of the most recent transaction
       yearAverages: [], // yearly average monzo spend
@@ -157,8 +155,7 @@ class Home extends Component {
    * @return {[type]} [description]
    */
   componentDidMount() {
-    let m = new Monzo();
-    m.whatami();
+
     // make sure the state contains the default amounts
     this.setAmounts();
 
@@ -166,7 +163,22 @@ class Home extends Component {
     this.setSinceDate();
 
     // initialize auth, get an access token from laravel
-    this.initializeAuthentication();
+    this.startApiProcess();
+  }
+
+  startApiProcess() {
+    let self = this;
+    this.initializeAuthenticationWithCallback(function(){
+        let bank;
+        if (self.state.currentBank == 'monzo') {
+            bank = new Monzo();
+        }
+        if (self.state.currentBank == 'starling') {
+            bank = new Starling();
+        }
+        // query the api for an account id
+        bank.fetchAccountId(self.state.accessToken);
+    });
   }
 
   /**
@@ -174,7 +186,7 @@ class Home extends Component {
    * If yes, store in state for later use.
    * @return {[type]} [description]
    */
-  initializeAuthentication() {
+  initializeAuthenticationWithCallback(callback) {
     fetch("/credentials")
       .then(res => res.json())
       .then(
@@ -201,73 +213,10 @@ class Home extends Component {
       .then(
         (howManyItems) => {
           if (howManyItems) {
-            // If yes, query the api for an account id
-            this.fetchAccountId();
+            callback();
           }
         }
       )
-  }
-
-  /**
-   * Get the account id from the monzo api
-   * @return {[type]} [description]
-   */
-  fetchAccountId() {
-    const { monzoApi } = this.state;
-    let self = this;
-    fetch(monzoApi + '/accounts', this.authParams())
-      .then(function(response) {
-        if(response.status !== 200) {
-          // did not get a 200, log the user out
-          // TODO: some kind of error message?
-          this.logOut();
-        }
-        return response;
-      })
-      .then(res => res.json())
-      .then(
-        (result) => {
-          // success, add accounts to state
-          this.setState({
-            accounts: result.accounts
-          });
-        },
-        (error) => {
-          this.setState({
-            error
-          });
-        }
-      )
-      .then(
-          () => {
-            // success, try to extract retail account id
-            this.setRetailAccountId();
-          }
-      )
-      .then(
-          () => {
-            // success, first try to fill transactions from localstorage
-            this.fillTransactionsFromLocalStorage();
-            // then try to get transactions from api
-            this.populateTransactions();
-          }
-      )
-  }
-
-  /**
-   * Check api response for account that matches 'uk_retail'.
-   * Add to state if match exists.
-   */
-  setRetailAccountId() {
-    const { accounts } = this.state;
-
-    accounts.forEach(function(account) {
-        if (account.type === 'uk_retail') {
-          this.setState({
-            accountId: account.id
-          });
-        }
-    }.bind(this));
   }
 
   /**
@@ -285,21 +234,6 @@ class Home extends Component {
     }
 
     return out.join('&');
-  }
-
-  /**
-   * Returns the auth params
-   * @param  {String} method Http verb e.g GET/POST
-   * @return {Object}        The auth params
-   */
-  authParams(method = 'GET') {
-    const { accessToken } = this.state;
-    return {
-      method: method,
-      headers: {
-        'Authorization': 'Bearer ' + accessToken
-      }
-    }
   }
 
   /**

@@ -79,6 +79,10 @@ class MainController extends Controller
             }
         }
 
+        // used for debug. access token is fake
+        //$credentials = new \StdClass;
+        //$credentials->access_token = 'tFzoh7WGRXwBdCyR3daL2aqM8F4dsmlJYqB1Wh5xWkf9rXFYsDWDz6SfUF2epUDM';
+
         if (isset($credentials->access_token)) {
             $array['current_bank'] = ($request->session()->has('current_bank') ? $request->session()->get('current_bank') : false);
             $array['access_token'] = $credentials->access_token;
