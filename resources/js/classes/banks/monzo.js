@@ -92,7 +92,7 @@ class Monzo extends Bank {
           const json = await response.json();
           const transactions = json.transactions;
 
-          self.processApiTransactions(transactions);
+          self.processApiTransactions(transactions, accountId);
 
           // if the there were less than 100 transactions in the response
           if (transactions.length < 100) {
@@ -135,29 +135,25 @@ class Monzo extends Bank {
    * @param  {} transactions Straight from the api
    * @return {} filtered travel transactions
    */
-  processApiTransactions(transactions) {
+  processApiTransactions(transactions, accountId) {
     self = this;
     transactions.forEach(function(transaction) {
       // detect tfl transactions
       // todo: make from here work
-      if (!self.transactionHasBeenProcessed(transaction) && self.transactionMatchesAccount(transaction) && self.isTflTransaction(transaction)) {
-        self.setState({
-          transactionsForTravel: [...self.state.transactionsForTravel, ...[{
+      if (!self.transactionHasBeenProcessed(transaction) && self.transactionMatchesAccount(transaction, accountId) && self.isTflTransaction(transaction)) {
+        self.transactionsForTravel.push({
             // only take what is needed out of the transaction
             account_id: transaction.account_id,
             amount: transaction.amount,
             created: transaction.created,
             id: transaction.id
-          }] ]
         });
 
         // store the transactions in the browsers localstorage
-        self.storeTravelTransactions();
+        //self.storeTravelTransactions();
       }
       // make sure we record the date of the last processed transaction
-      self.setState({
-        travelTransactionsLastDate: transaction.created
-      });
+      self.travelTransactionsLastDate = transaction.created;
     });
 
     // recalculate the totals

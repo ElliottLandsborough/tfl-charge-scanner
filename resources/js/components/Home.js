@@ -307,21 +307,6 @@ class Home extends Component {
     }
   }
 
-  // detect a tfl transaction
-  isTflTransaction(transaction) {
-    return (transaction.category == 'transport' && transaction.description.toLowerCase().includes('tfl.gov.uk'));
-  }
-
-  // check if transaction has already been processed
-  transactionHasBeenProcessed(transaction) {
-    return (self.state.usedTxKeys.includes(transaction.id))
-  }
-
-  // check if transaction matches account it
-  transactionMatchesAccount(transaction) {
-    return (transaction.account_id == self.state.accountId);
-  }
-
   /**
    * Store some parts the state in localstorage
    */

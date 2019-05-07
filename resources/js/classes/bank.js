@@ -3,6 +3,9 @@ import dateFormat from 'date-fns/format'
 import dateSubMonths from 'date-fns/sub_months'
 
 class Bank {
+  usedTxKeys = [];
+  transactionsForTravel = [];
+
   /**
    * Returns the auth params
    * @param  {String} method Http verb e.g GET/POST
@@ -44,6 +47,21 @@ class Bank {
     }
 
     return out.join('&');
+  }
+
+  // check if transaction has already been processed
+  transactionHasBeenProcessed(transaction) {
+    return (self.usedTxKeys.includes(transaction.id))
+  }
+
+  // check if transaction matches account it
+  transactionMatchesAccount(transaction, accountId) {
+    return (transaction.account_id == accountId);
+  }
+
+  // detect a tfl transaction
+  isTflTransaction(transaction) {
+    return (transaction.category == 'transport' && transaction.description.toLowerCase().includes('tfl.gov.uk'));
   }
 
 }
