@@ -8,11 +8,8 @@ import GraphAmounts from './GraphAmounts'
 import TflAmount from './TflAmount'
 import Loader from './Loader'
 // date-fns
-import dateSubMonths from 'date-fns/sub_months'
-import dateFormat from 'date-fns/format'
 import dateParse from 'date-fns/parse'
 import dateDiffInDays from 'date-fns/difference_in_days'
-import isAfter from 'date-fns/is_after'
 
 class Home extends Component {
 
@@ -168,7 +165,8 @@ class Home extends Component {
 
   startApiProcess() {
     let self = this;
-    this.initializeAuthenticationWithCallback(function(){
+
+    this.initializeAuthenticationWithCallback(function() {
         let bank;
         if (self.state.currentBank == 'monzo') {
             bank = new Monzo();
@@ -217,39 +215,6 @@ class Home extends Component {
           }
         }
       )
-  }
-
-  /**
-   * Calculate how many days between when we started counting from
-   * and what date the api has returned (for the progress bar).
-   * @return {Number} Between 0 and 100 usually.
-   */
-  getDaysPercentage()
-  {
-    // this can only happen if we have both a start date and the api has returned some transactions
-    if (this.state.sinceDate !== false && this.state.transactionsForTravel.length) {
-        // last date from list of transactions (string)
-        const lastDateString = this.state.transactionsForTravel[this.state.transactionsForTravel.length-1].created;
-
-        // day count between now and when we started querying the api
-        const fromStartUntilNow = dateDiffInDays(
-            new Date(), // now
-            dateParse(this.state.sinceDate) // date we start querying api from
-        );
-
-        // day count between when we started querying the api and the last thing the api returned
-        const fromstartUntilLast = dateDiffInDays(
-            dateParse(lastDateString),  // last date from list of transactions (string)
-            dateParse(this.state.sinceDate) // date we start querying api from
-        );
-
-        // calc percentage
-        const percentage = Math.round(fromstartUntilLast / fromStartUntilNow * 100);
-
-        return percentage;
-    }
-
-    return 0;
   }
 
   /**
@@ -316,58 +281,6 @@ class Home extends Component {
     localStorage.setItem('travelTransactionsLastDate', JSON.stringify(this.state.travelTransactionsLastDate));
   }
 
-  /**
-   * Calculate the totals and averages from the transactions in the state
-   * @return {[type]} [description]
-   */
-  travelTotals() {
-    // some defaults
-    let self = this;
-    let yearAverages = {};
-    let yearTotals = {};
-    let yearMonths = {};
-    let fullTotal = 0;
-
-    // loop through all transactions
-    this.state.transactionsForTravel.forEach(function(transaction) {
-      // did this transaction happen after the 'since' date?
-      const transactionIsAfterSinceDate = isAfter(
-        dateParse(transaction.created),
-        dateParse(self.state.sinceDate)
-      );
-
-      // this check stops transactions in localstorage from before the since date being processed
-      if (transactionIsAfterSinceDate) {
-          const amount = transaction.amount;
-          const month = transaction.created.substr(5,2);
-          const year = transaction.created.substr(0,4);
-
-          // total per year, initialize as 0 if it doesnt exist yet
-          if (typeof yearTotals[year] == "undefined") yearTotals[year] = 0;
-          yearTotals[year] += amount;
-
-          // average per year, initialize as 0 if it doesnt exist yet
-          if (typeof yearAverages[year] == "undefined") yearAverages[year] = 0;
-          yearAverages[year] += Math.round(amount / 12);
-
-          // total per yearMonth initialize as 0 if it doesnt exist yet
-          if (typeof yearMonths['' + year + month] == "undefined") yearMonths['' + year + month] = 0;
-          yearMonths['' + year + month] += amount;
-
-          // total of everything
-          fullTotal += amount;
-      }
-    });
-
-    // add all calculations to the state
-    this.setState({
-        yearAverages: yearAverages,
-        yearTotals: yearTotals,
-        yearMonths: yearMonths,
-        fullTotal: fullTotal,
-    });
-  }
-
   // runs whenever 'from' checkbox is changed
   setFromZone(event) {
     this.setAmounts(event.target.value, this.state.toZone);
@@ -428,7 +341,7 @@ class Home extends Component {
       );
       return (
         <div>
-          <Loader daysPercentage={this.getDaysPercentage()} loadingIsComplete={this.state.loadingIsComplete} />
+          <Loader daysPercentage={this.state.daysPercentage} loadingIsComplete={this.state.loadingIsComplete} />
           <GraphAmounts yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} yearMonths={this.state.yearMonths} monzoMonthlyAverage={this.getMonzoMonthlyAverage()} />
           <div className="zone-selector">
             From zone

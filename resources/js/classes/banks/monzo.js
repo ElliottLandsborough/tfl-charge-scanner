@@ -139,7 +139,6 @@ class Monzo extends Bank {
     self = this;
     transactions.forEach(function(transaction) {
       // detect tfl transactions
-      // todo: make from here work
       if (!self.transactionHasBeenProcessed(transaction) && self.transactionMatchesAccount(transaction, accountId) && self.isTflTransaction(transaction)) {
         self.transactionsForTravel.push({
             // only take what is needed out of the transaction
@@ -157,9 +156,7 @@ class Monzo extends Bank {
     });
 
     // recalculate the totals
-    self.travelTotals();
-
-    return self.state.transactionsForTravel;
+    return self.travelTotals();
   }
 }
 
