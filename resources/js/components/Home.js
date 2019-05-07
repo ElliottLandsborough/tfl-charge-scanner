@@ -160,7 +160,7 @@ class Home extends Component {
     this.setAmounts();
 
     // set the since date in the state
-    this.setSinceDate();
+    //this.setSinceDate();
 
     // initialize auth, get an access token from laravel
     this.startApiProcess();
@@ -217,51 +217,6 @@ class Home extends Component {
           }
         }
       )
-  }
-
-  /**
-   * Returns a url string generated from an object with keys
-   * @param  {object} params {var1: string, var2: lol}
-   * @return {string}        'var1=string&var2=lol'
-   */
-  urlEncode(params) {
-    var out = [];
-
-    for (var key in params) {
-      if (params.hasOwnProperty(key)) {
-        out.push(key + '=' + encodeURIComponent(params[key]));
-      }
-    }
-
-    return out.join('&');
-  }
-
-  /**
-   * Set the date to start counting transactions from
-   */
-  setSinceDate() {
-    // subtract 12 months
-    const sinceObject = dateSubMonths(new Date(), 12);
-    // format it
-    const since = dateFormat(sinceObject, 'YYYY-MM') + '-01T00:00:00Z'
-    this.setState({sinceDate: since});
-  }
-
-  generateTransactionUrl(since = false) {
-    const { monzoApi, accountId } = this.state;
-
-    if (!since) {
-        since = this.state.sinceDate;
-    }
-
-    let params = {
-      // 'expand[]': 'merchant', // this may slow it down?
-      'limit': 100,
-      'account_id': accountId,
-      'since': since,
-    };
-
-    return monzoApi + '/transactions?' + this.urlEncode(params);
   }
 
   /**
@@ -365,41 +320,6 @@ class Home extends Component {
   // check if transaction matches account it
   transactionMatchesAccount(transaction) {
     return (transaction.account_id == self.state.accountId);
-  }
-
-  /**
-   * Process transactions from the api
-   * @param  {} transactions Straight from the api
-   * @return {} filtered travel transactions
-   */
-  processApiTransactions(transactions) {
-    self = this;
-    transactions.forEach(function(transaction) {
-      // detect tfl transactions
-      if (!self.transactionHasBeenProcessed(transaction) && self.transactionMatchesAccount(transaction) && self.isTflTransaction(transaction)) {
-        self.setState({
-          transactionsForTravel: [...self.state.transactionsForTravel, ...[{
-            // only take what is needed out of the transaction
-            account_id: transaction.account_id,
-            amount: transaction.amount,
-            created: transaction.created,
-            id: transaction.id
-          }] ]
-        });
-
-        // store the transactions in the browsers localstorage
-        self.storeTravelTransactions();
-      }
-      // make sure we record the date of the last processed transaction
-      self.setState({
-        travelTransactionsLastDate: transaction.created
-      });
-    });
-
-    // recalculate the totals
-    self.travelTotals();
-
-    return self.state.transactionsForTravel;
   }
 
   /**

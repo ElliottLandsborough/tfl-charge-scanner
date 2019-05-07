@@ -1,6 +1,8 @@
 import Bank from '../bank'
 
 class Monzo extends Bank {
+  travelTransactionsLastDate = false;
+
   apiUrl() {
     return 'https://api.monzo.com';
   }
@@ -27,14 +29,13 @@ class Monzo extends Bank {
         (response) => {
           // success, try to extract retail account id
           return self.getRetailAccountId(response.accounts, function(accountId) {
-            // todo: continue work from here
-            console.log(accountId);
             /*
             // success, first try to fill transactions from localstorage
+            // todo: make this work
             this.fillTransactionsFromLocalStorage();
             */
             // try to get transactions from api
-            self.populateTransactions(accessToken);
+            self.populateTransactions(accountId, accessToken);
           });
         },
         (error) => {
@@ -69,14 +70,14 @@ class Monzo extends Bank {
   // this is a bit weird because we have to call the api once at a time...
   // maybe do it by month instead?
   // TODO: clean this up!!!
-  populateTransactions(accessToken) {
+  populateTransactions(accountId, accessToken) {
     let self = this;
     // TODO: handle the 401 here, probably clear the credentials
     // and set the state back to isAuthorized: false, clear the old creds
     let transactionsLoop = async function () {
       let continueLoop = true;
-      while (continueLoop && self.state.accessToken !== false) {
-        const response = await fetch(self.generateTransactionUrl(self.state.travelTransactionsLastDate), self.authParams())
+      while (continueLoop && accessToken !== false) {
+        const response = await fetch(self.generateTransactionUrl(accountId, self.travelTransactionsLastDate), self.authParams(accessToken))
           .then(function(response) {
             if(response.status !== 200) {
               // did not get a 200, log the user out
@@ -87,7 +88,7 @@ class Monzo extends Bank {
             return response;
           });
 
-        try {
+        //try {
           const json = await response.json();
           const transactions = json.transactions;
 
@@ -100,16 +101,69 @@ class Monzo extends Bank {
             // loading is complete
             self.setState({loadingIsComplete: true});
           }
-        } catch {
+        /*} catch {
           // most likely the user was already logged out...
           console.log('error processing api response');
           // stop the loop
           continueLoop = false;
-        }
+        }*/
       }
     }
 
     transactionsLoop();
+  }
+
+  generateTransactionUrl(accountId, since = false) {
+    const monzoApi = this.apiUrl();
+
+    if (!since) {
+        since = this.getSinceDate();
+    }
+
+    let params = {
+      // 'expand[]': 'merchant', // this may slow it down?
+      'limit': 100,
+      'account_id': accountId,
+      'since': since,
+    };
+
+    return monzoApi + '/transactions?' + this.urlEncode(params);
+  }
+
+  /**
+   * Process transactions from the api
+   * @param  {} transactions Straight from the api
+   * @return {} filtered travel transactions
+   */
+  processApiTransactions(transactions) {
+    self = this;
+    transactions.forEach(function(transaction) {
+      // detect tfl transactions
+      // todo: make from here work
+      if (!self.transactionHasBeenProcessed(transaction) && self.transactionMatchesAccount(transaction) && self.isTflTransaction(transaction)) {
+        self.setState({
+          transactionsForTravel: [...self.state.transactionsForTravel, ...[{
+            // only take what is needed out of the transaction
+            account_id: transaction.account_id,
+            amount: transaction.amount,
+            created: transaction.created,
+            id: transaction.id
+          }] ]
+        });
+
+        // store the transactions in the browsers localstorage
+        self.storeTravelTransactions();
+      }
+      // make sure we record the date of the last processed transaction
+      self.setState({
+        travelTransactionsLastDate: transaction.created
+      });
+    });
+
+    // recalculate the totals
+    self.travelTotals();
+
+    return self.state.transactionsForTravel;
   }
 }
 
