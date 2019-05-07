@@ -11,7 +11,7 @@ import Home from './Home'
  * @param  {Integer} ms The number of ms to sleep
  * @return {Promise}
  */
-sleep(ms) {
+function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
