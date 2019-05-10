@@ -150,7 +150,7 @@ class GraphAmounts extends Component {
     //const {height, width, id} = this.props;
     return (
       <div className="price-graph">
-        <Bar data={chartData} options={chartOptions} redraw={this.state.redraw} />
+        <Bar data={chartData} options={chartOptions} />
       </div>
     )
   }

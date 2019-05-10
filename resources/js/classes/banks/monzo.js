@@ -99,7 +99,7 @@ class Monzo extends Bank {
             // stop the loop
             continueLoop = false;
             // loading is complete
-            self.setState({loadingIsComplete: true});
+            self.loadingIsComplete = true;
           }
         /*} catch {
           // most likely the user was already logged out...

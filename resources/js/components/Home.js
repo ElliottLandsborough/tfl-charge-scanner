@@ -13,6 +13,10 @@ import dateDiffInDays from 'date-fns/difference_in_days'
 
 class Home extends Component {
 
+  bank = false;
+  currentBank = false;
+  accessToken = false; // the access token returned from the api
+
   /**
    * Constructor
    * @param  {[type]} props [description]
@@ -36,10 +40,8 @@ class Home extends Component {
    */
   initialState() {
     return {
-      currentBank: false,
       error: null, // in case an error happens
       isAuthorized: false, // becomes true if an auth token exists
-      accessToken: false, // the access token returned from the api
       transactionsForTravel: [], // transactions used for TFL travel
       travelTransactionsLastDate: false, // the date of the most recent transaction
       yearAverages: [], // yearly average monzo spend
@@ -161,21 +163,37 @@ class Home extends Component {
 
     // initialize auth, get an access token from laravel
     this.startApiProcess();
+
+    let self = this;
+
+    setInterval(function() {
+        // of bank was selected and loading has not completed yet
+        if (self.bank !== false && self.bank.getLoadingIsComplete() !== true) {
+            self.setState({transactionsForTravel: self.bank.getTransactionsForTravel()});
+            let travelTotals = self.bank.travelTotals();
+            self.setState({
+                fullTotal:    travelTotals.fullTotal,
+                percentage:   travelTotals.percentage,
+                yearAverages: travelTotals.yearAverages,
+                yearMonths:   travelTotals.yearMonths,
+                yearTotals:   travelTotals.yearTotals,
+            });
+        }
+    }, 1 * 1000); // first int is seconds
   }
 
   startApiProcess() {
     let self = this;
 
     this.initializeAuthenticationWithCallback(function() {
-        let bank;
-        if (self.state.currentBank == 'monzo') {
-            bank = new Monzo();
+        if (self.currentBank === 'monzo') {
+            self.bank = new Monzo();
         }
-        if (self.state.currentBank == 'starling') {
-            bank = new Starling();
+        if (self.currentBank === 'starling') {
+            self.bank = new Starling();
         }
         // query the api for an account id
-        bank.fetchAccountId(self.state.accessToken);
+        self.bank.fetchAccountId(self.accessToken);
     });
   }
 
@@ -191,11 +209,9 @@ class Home extends Component {
         (result) => {
           const howManyItems = Object.keys(result).length;
           if (howManyItems) {
-            this.setState({
-                isAuthorized: true,
-                accessToken: result.access_token,
-                currentBank: result.current_bank
-            });
+            this.setState({ isAuthorized: true });
+            this.accessToken = result.access_token;
+            this.currentBank = result.current_bank;
           }
           return howManyItems;
         },
@@ -307,7 +323,7 @@ class Home extends Component {
    * @return {[type]} [description]
    */
   logOut() {
-    const { accessToken } = this.state;
+    const { accessToken } = this;
     // can only log out if we have an access token
     if (accessToken !== false) {
         // async get all logout urls, no need to process response
@@ -341,7 +357,7 @@ class Home extends Component {
       );
       return (
         <div>
-          <Loader daysPercentage={this.state.daysPercentage} loadingIsComplete={this.state.loadingIsComplete} />
+          <Loader daysPercentage={this.state.percentage} loadingIsComplete={this.state.loadingIsComplete} />
           <GraphAmounts yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} yearMonths={this.state.yearMonths} monzoMonthlyAverage={this.getMonzoMonthlyAverage()} />
           <div className="zone-selector">
             From zone

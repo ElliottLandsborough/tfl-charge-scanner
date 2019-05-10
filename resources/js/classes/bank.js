@@ -9,6 +9,7 @@ class Bank {
   usedTxKeys = [];
   transactionsForTravel = [];
   sinceDate = this.getSinceDate();
+  loadingIsComplete = false;
 
   /**
    * Returns the auth params
@@ -22,6 +23,14 @@ class Bank {
         'Authorization': 'Bearer ' + accessToken
       }
     }
+  }
+
+  getTransactionsForTravel() {
+    return this.transactionsForTravel;
+  }
+
+  getLoadingIsComplete() {
+    return (this.loadingIsComplete === true);
   }
 
   /**
