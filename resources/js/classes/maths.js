@@ -178,6 +178,32 @@ class Maths {
       percentage: this.getDaysPercentage(transactionsForTravel. sinceDate),
     };
   }
+
+  /**
+   * Find out how much someone spends per month
+   * @return {Number} (e.g 92.47)
+   */
+  getMonthlyAverage(fullTotal, sinceDate)
+  {
+    // convert the full total to a positive number of pounds/pence
+    fullTotal = fullTotal * -1 / 100;
+    // only bother if a start date was set and the total is bigger than 0
+    if (sinceDate !== false && fullTotal > 0) {
+        // average number of days in a month including leaps
+        const daysInMonth = 30.44;
+        // how many days exist between start and now?
+        const fromStartUntilNow1 = dateDiffInDays(
+            new Date(),
+            dateParse(sinceDate)
+        )
+        // and this equates to how many months (e.g 12.76)
+        const exactMonths = fromStartUntilNow1 / daysInMonth;
+        // the total equates to this much per month
+        return (fullTotal / exactMonths).toFixed(2);
+    }
+
+    return 0;
+  }
 }
 
 export default Maths;

@@ -49,18 +49,18 @@ class Home extends Component {
       error: null, // in case an error happens
       isAuthorized: false, // becomes true if an auth token exists
       transactionsForTravel: [], // transactions used for TFL travel
-      travelTransactionsLastDate: false, // the date of the most recent transaction
-      yearAverages: [], // yearly average monzo spend
-      yearTotals: [], // yearly total monzo spend
-      yearMonths: [], // monthly total monzo spend
+      //travelTransactionsLastDate: false, // the date of the most recent transaction
+      yearAverages: [], // yearly average spend
+      yearTotals: [], // yearly total spend
+      yearMonths: [], // monthly total spend
       fromZone: 0, // current 'from' zone from dropdowns
       toZone: 0, // current 'to' zone from dropdowns
       yearlyAmount: 0, // current yearly tfl price based on dropdowns
       clubAmount: 0, // current commuterclub price based on dropdowns
-      sinceDate: false, // when to count transactions from
-      loadingIsComplete: false, // becomes true when transaction loop finishes
-      fullTotal: 0, // all monzo tfl transactions added together
-      usedTxKeys: [], // transaction ids that have already been grabbed from the api
+      //sinceDate: false, // when to count transactions from
+      //loadingIsComplete: false, // becomes true when transaction loop finishes
+      fullTotal: 0, // all tfl transactions added together
+      //usedTxKeys: [], // transaction ids that have already been grabbed from the api
     };
   }
 
@@ -147,32 +147,6 @@ class Home extends Component {
       )
   }
 
-  /**
-   * Find out how much someone spends per month
-   * @return {Number} (e.g 92.47)
-   */
-  getMonthlyAverage()
-  {
-    // convert the full total to a positive number of pounds/pence
-    const fullTotal = this.state.fullTotal * -1 / 100;
-    // only bother if a start date was set and the total is bigger than 0
-    if (this.state.sinceDate !== false && fullTotal > 0) {
-        // average number of days in a month including leaps
-        const daysInMonth = 30.44;
-        // how many days exist between start and now?
-        const fromStartUntilNow1 = dateDiffInDays(
-            new Date(),
-            dateParse(this.state.sinceDate)
-        )
-        // and this equates to how many months (e.g 12.76)
-        const exactMonths = fromStartUntilNow1 / daysInMonth;
-        // the total equates to this much per month
-        return (fullTotal / exactMonths).toFixed(2);
-    }
-
-    return 0;
-  }
-
   // runs whenever 'from' checkbox is changed
   setFromZone(event) {
     this.setAmounts(event.target.value, this.state.toZone);
@@ -234,7 +208,7 @@ class Home extends Component {
       return (
         <div>
           <Loader daysPercentage={this.state.percentage} loadingIsComplete={this.state.loadingIsComplete} />
-          <GraphAmounts yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} yearMonths={this.state.yearMonths} monzoMonthlyAverage={this.getMonthlyAverage()} />
+          <GraphAmounts yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} yearMonths={this.state.yearMonths} monzoMonthlyAverage={this.maths.getMonthlyAverage(this.state.fullTotal, this.bank.sinceDate)} />
           <div className="zone-selector">
             From zone
             <select id="zoneFromSelector" className="form-control" onChange={this.setFromZone} value={this.state.fromZone}>
@@ -246,7 +220,7 @@ class Home extends Component {
             </select>
           </div>
           <div className="tfl-amount">
-            <TflAmount yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} monzoMonthlyAverage={this.getMonthlyAverage()} />
+            <TflAmount yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} monzoMonthlyAverage={this.maths.getMonthlyAverage(this.state.fullTotal, this.bank.sinceDate)} />
           </div>
           <div className="log-out">
             <button className="logout" onClick={this.logOut}>Logout</button>
