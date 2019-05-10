@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App;
 use stdClass;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
@@ -14,10 +15,15 @@ use GuzzleHttp\Exception\ClientException; // 400 level errors
  */
 class AuthService
 {
+    protected $apiUrl;
     protected $callBackUrl;
     protected $credentials;
     protected $apiClientId;
     protected $apiSecret;
+
+    public function __construct()
+    {
+    }
 
     /**
      * Make callbackurl settable by public
@@ -108,7 +114,7 @@ class AuthService
         $client = new Client();
 
         try {
-            $response = $client->request('POST', 'https://api.monzo.com/oauth2/token', [
+            $response = $client->request('POST', $this->apiUrl . $this->tokenPath, [
                 'form_params' => $formParams
             ]);
         } catch (ClientException $e) {
@@ -133,7 +139,7 @@ class AuthService
     public function setCredentialsFromCallback(string $state, string $code)
     {
         // check if the state is valid (will only be for 1 hour)
-        if (!Cache::has($state)) {
+        if (!Cache::has($state) && App::environment('production')) {
             die('Session Expired'); // send message to flash?
         }
 
