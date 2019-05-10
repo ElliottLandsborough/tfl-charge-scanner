@@ -323,17 +323,12 @@ class Home extends Component {
    * @return {[type]} [description]
    */
   logOut() {
-    const { accessToken } = this;
-    // can only log out if we have an access token
-    if (accessToken !== false) {
-        // async get all logout urls, no need to process response
-        fetch(this.state.monzoApi + '/oauth2/logout', this.authParams('POST')); // log out of monzo api
-    }
+    // log out of bank
+    this.bank.logout(this.accessToken);
+    // log out of laravel
     fetch('/logout'); // log out of laravels everything
-
     // reset state to initial values
     this.setState(this.initialState());
-
     // clear localstorage
     localStorage.clear();
   }

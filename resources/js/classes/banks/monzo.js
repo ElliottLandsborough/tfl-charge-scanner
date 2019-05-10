@@ -2,10 +2,8 @@ import Bank from '../bank'
 
 class Monzo extends Bank {
   travelTransactionsLastDate = false;
-
-  apiUrl() {
-    return 'https://api.monzo.com';
-  }
+  apiUrl = 'https://api.monzo.com';
+  continueLoop = true;
 
   /**
    * Get the account id from the monzo api
@@ -13,7 +11,7 @@ class Monzo extends Bank {
    */
   fetchAccountId(accessToken) {
     let self = this;
-    fetch(this.apiUrl() + '/accounts', this.authParams(accessToken))
+    fetch(this.apiUrl + '/accounts', this.authParams(accessToken))
       .then(
         (response) => {
             if(response.status !== 200) {
@@ -75,8 +73,7 @@ class Monzo extends Bank {
     // TODO: handle the 401 here, probably clear the credentials
     // and set the state back to isAuthorized: false, clear the old creds
     let transactionsLoop = async function () {
-      let continueLoop = true;
-      while (continueLoop && accessToken !== false) {
+      while (self.continueLoop && accessToken !== false) {
         const response = await fetch(self.generateTransactionUrl(accountId, self.travelTransactionsLastDate), self.authParams(accessToken))
           .then(function(response) {
             if(response.status !== 200) {
@@ -97,7 +94,7 @@ class Monzo extends Bank {
           // if the there were less than 100 transactions in the response
           if (transactions.length < 100) {
             // stop the loop
-            continueLoop = false;
+            self.continueLoop = false;
             // loading is complete
             self.loadingIsComplete = true;
           }
@@ -114,7 +111,7 @@ class Monzo extends Bank {
   }
 
   generateTransactionUrl(accountId, since = false) {
-    const monzoApi = this.apiUrl();
+    const monzoApi = this.apiUrl;
 
     if (!since) {
         since = this.getSinceDate();
@@ -157,6 +154,16 @@ class Monzo extends Bank {
 
     // recalculate the totals
     return self.travelTotals();
+  }
+
+  logout(accessToken = false) {
+    // stop the loop
+    this.continueLoop = false;
+    // can only log out if we have an access token
+    if (accessToken !== false) {
+        // async get all logout urls, no need to process response
+        fetch(this.apiUrl + '/oauth2/logout', this.authParams(accessToken, 'POST')); // log out of monzo api
+    }
   }
 }
 
