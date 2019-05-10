@@ -13,7 +13,7 @@ class Bank {
    * @param  {String} method Http verb e.g GET/POST
    * @return {Object}        The auth params
    */
-  authParams(accessToken = '', method = 'GET') {
+  authParams(accessToken = '', method = 'get') {
     return {
       method: method,
       headers: {
