@@ -151,9 +151,6 @@ class Monzo extends Bank {
       // make sure we record the date of the last processed transaction
       self.travelTransactionsLastDate = transaction.created;
     });
-
-    // recalculate the totals
-    return self.travelTotals();
   }
 
   logout(accessToken = false) {
