@@ -232,4 +232,16 @@ class AuthService
 
         return $this;
     }
+
+    public function apiGetRequest($path = null, $headers = [])
+    {
+        // OMFG is it the wrong key??
+        $client = new Client(['base_uri' => $this->apiUrl]);
+
+        $response = $client->request('GET', $path, [
+            'headers' => $headers
+        ]);
+
+        return $response;
+    }
 }

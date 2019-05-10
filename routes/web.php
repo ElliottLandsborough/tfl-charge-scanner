@@ -24,3 +24,4 @@ Route::get('/credentials/monzo', 'MonzoController@credentials')->name('credentia
 Route::get('/auth/starling', 'StarlingController@authUrl')->name('auth.starling');
 Route::get('/callback/starling', 'StarlingController@callback')->name('callback.starling');
 Route::get('/credentials/starling', 'StarlingController@credentials')->name('credentials.starling');
+Route::get('/apiproxy/starling/{endpoint}', 'StarlingController@proxy')->name('apiproxy.starling');

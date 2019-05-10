@@ -37,4 +37,22 @@ class StarlingController extends MainController
         }
         return redirect($this->setCurrentBankInSession($request, 'starling')->authorizer->generateAuthUrl($url));
     }
+
+    public function proxy($endpoint)
+    {
+        $headers = [
+            'Authorization' => app('request')->header('Authorization', false)
+        ];
+
+        // super primitive protection
+        if (!strlen(trim($endpoint))) {
+            die();
+        }
+
+        if ($endpoint === 'accounts') {
+            $path = '/api/v2/accounts';
+        }
+
+        var_dump($this->authorizer->apiGetRequest($path, $headers));
+    }
 }
