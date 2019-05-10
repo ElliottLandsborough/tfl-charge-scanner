@@ -3,7 +3,7 @@
 @import url('https://fonts.googleapis.com/css?family=Nunito');
 
 // Variables
-@import 'variables';
+//@import 'variables';
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
@@ -99,11 +99,10 @@
         border-radius: 5px;
         display: block;
         margin: 0 auto 50px;
-        background-color: #fd3a4a;
         color: #fff;
         font-size: 20px;
         padding: 10px;
-        max-width: 230px;
+        max-width: 250px;
         width: 95%;
         text-align: center;
         font-weight: bold;
@@ -111,6 +110,12 @@
             color: #fff;
             background-color: #fd6874;
             text-decoration: none;
+        }
+        &.monzo {
+            background-color: #fd3a4a;
+        }
+        &.starling {
+            background-color: #7433ff;
         }
     }
 }
