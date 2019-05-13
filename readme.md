@@ -1,10 +1,10 @@
-# Monzo Balance
+# TFL Charge Scanner for Monzo/Starling
 
 https://londoncommute.uk
 
 ## What?
 
-Checks your monzo transactions to see how much you waste on London transport (Have you considered buying a [bicycle from Amazon](https://amzn.to/2RK1qCz)?)
+Checks your transactions to see how much you waste on London transport (Have you considered buying a [bicycle from Amazon](https://amzn.to/2RK1qCz)?)
 
 Laravel 5, React, Docker
 
