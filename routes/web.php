@@ -12,7 +12,7 @@
 */
 
 Route::get('/', 'MainController@home')->name('home');
-Route::get('/help', 'MainController@help')->name('help');
+Route::get('/help', 'MainController@home')->name('help');
 Route::get('/logout', 'MainController@logout')->name('logout');
 Route::get('/credentials', 'MainController@credentials')->name('credentials');
 

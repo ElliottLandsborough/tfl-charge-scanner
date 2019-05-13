@@ -189,3 +189,25 @@
         font-size: 14px;
     }
 }
+
+.help-container {
+    max-width: 800px;
+    width: 95%;
+    margin: 0 auto;
+    h2, h3 {
+        text-align: center;
+    }
+    h2 {
+        margin-top: 20px;
+        margin-bottom: 18px;
+        font-size: 24px;
+    }
+    h3 {
+        margin-top: 20px;
+        margin-bottom: 18px;
+        font-size: 20px;
+    }
+    img {
+        border: 1px solid #14233c;
+    }
+}

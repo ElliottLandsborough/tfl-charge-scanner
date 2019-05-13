@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import Header from './Header'
 import Home from './Home'
+import Help from './Help'
 
 /**
  * Sleep function, mostly used for debugging purposes e.g 'await sleep(200)'
@@ -23,6 +24,7 @@ class App extends Component {
           <Header />
           <Switch>
             <Route exact path='/' component={Home} />
+            <Route exact path='/help' component={Help} />
           </Switch>
         </div>
       </BrowserRouter>
