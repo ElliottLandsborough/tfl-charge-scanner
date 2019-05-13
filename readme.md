@@ -42,4 +42,5 @@ docker-compose up -d
  - clean up classes
  - comment everything
  - separate concerns
+ - local storage?
  - allow user to enter their monzo api keys through the gui
