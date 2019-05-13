@@ -43,4 +43,3 @@ docker-compose up -d
  - comment everything
  - separate concerns
  - local storage?
- - allow user to enter their monzo api keys through the gui
