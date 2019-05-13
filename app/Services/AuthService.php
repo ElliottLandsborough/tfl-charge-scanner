@@ -235,13 +235,22 @@ class AuthService
 
     public function apiGetRequest($path = null, $headers = [])
     {
-        // OMFG is it the wrong key??
         $client = new Client(['base_uri' => $this->apiUrl]);
 
-        $response = $client->request('GET', $path, [
-            'headers' => $headers
-        ]);
+        try {
+            $response = $client->request('GET', $path, [
+                'headers' => $headers
+            ]);
+        } catch (ClientException $e) {
+            die($e->getMessage());
+        }
 
-        return $response;
+        $body = $response->getBody();
+
+        $stringBody = (string) $body;
+
+        $object = json_decode($stringBody);
+
+        return $object;
     }
 }

@@ -121,14 +121,13 @@
 }
 
 .log-out {
-    .logout {
+    button {
         cursor: pointer;
         border-radius: 5px;
         border-collapse: collapse;
         border: none;
         display: block;
         margin: 26px auto 0px;
-        background-color: #fd3a4a;
         color: #fff;
         font-size: 18px;
         padding: 5px;
@@ -139,6 +138,12 @@
             color: #fff;
             background-color: #fd6874;
             text-decoration: none;
+        }
+        &.monzo {
+            background-color: #fd3a4a;
+        }
+        &.starling {
+            background-color: #7433ff;
         }
     }
 }

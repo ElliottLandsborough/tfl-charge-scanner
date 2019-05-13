@@ -53,6 +53,32 @@ class StarlingController extends MainController
             $path = '/api/v2/accounts';
         }
 
-        var_dump($this->authorizer->apiGetRequest($path, $headers));
+        if ($endpoint === 'transactions') {
+            //$path = '/api/v1/transactions';
+            $accountUid = app('request')->header('accountUid', false);
+            $categoryUid = app('request')->header('categoryUid', false);
+            $params = [
+                'changesSince' => (isset($_GET['since']) ? ($_GET['since']) : null),
+            ];
+            $params['account_id'] = '1';
+            $path = "/api/v2/feed/account/$accountUid/category/$categoryUid?" . http_build_query($params);
+        }
+
+        $response = $this->authorizer->apiGetRequest($path, $headers);
+
+        $content = [];
+
+        if (isset($response->accounts) && isset($response->accounts[0])) {
+            $content = [
+                'accountUid' => $response->accounts[0]->accountUid,
+                'defaultCategory' => $response->accounts[0]->defaultCategory,
+            ];
+        } else if (isset($response->feedItems)) {
+            $content = $response->feedItems;
+        } else {
+            $content = $response;
+        }
+
+        return response()->json(['status' => 'success', 'content' => $content]);
     }
 }

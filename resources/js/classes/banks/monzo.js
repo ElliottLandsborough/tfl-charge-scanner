@@ -6,6 +6,13 @@ class Monzo extends Bank {
   continueLoop = true;
 
   /**
+   * Gets run by the home component if auth was successful
+   */
+  beginTransactionsProcess(accessToken) {
+    this.fetchAccountId(accessToken);
+  }
+
+  /**
    * Get the account id from the monzo api
    * @return {[type]} [description]
    */
@@ -38,9 +45,7 @@ class Monzo extends Bank {
         },
         (error) => {
           // todo: sort out this setstate
-          this.setState({
-            error
-          });
+          console.log(error);
         }
       )
   }
@@ -50,7 +55,7 @@ class Monzo extends Bank {
    * Add to state if match exists.
    */
   getRetailAccountId(accounts, callback) {
-    const promises = []  // collect all promises here
+    const promises = []; // collect all promises here
 
     accounts.forEach(function(account) {
       if (account.type === 'uk_retail') {
@@ -145,6 +150,8 @@ class Monzo extends Bank {
             id: transaction.id
         });
 
+        self.usedTxKeys.push(transaction.id);
+
         // store the transactions in the browsers localstorage
         //self.storeTravelTransactions();
       }
@@ -153,7 +160,12 @@ class Monzo extends Bank {
     });
   }
 
-  logout(accessToken = false) {
+  // detect a tfl transaction
+  isTflTransaction(transaction) {
+    return (transaction.category == 'transport' && transaction.description.toLowerCase().includes('tfl.gov.uk'));
+  }
+
+  logOut(accessToken = false) {
     // stop the loop
     this.continueLoop = false;
     // can only log out if we have an access token

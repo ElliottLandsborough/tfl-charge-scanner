@@ -1,9 +1,15 @@
 import Bank from '../bank'
 
 class Starling extends Bank {
-  //apiUrl = 'https://api-sandbox.starlingbank.com';
-  // apiUrl = 'https://api.starlingbank.com';
-  apiUrl = '/apiproxy/starling';
+  travelTransactionsLastDate = false;
+  continueLoop = true;
+
+  /**
+   * Gets run by the home component if auth was successful
+   */
+  beginTransactionsProcess(accessToken) {
+    this.fetchAccountId(accessToken);
+  }
 
   /**
    * Get the account id from the monzo api
@@ -18,35 +24,92 @@ class Starling extends Bank {
             if(response.status !== 200) {
               // did not get a 200, log the user out
               // TODO: some kind of error message?
-              this.logOut();
+              self.logOut();
             }
+
             return response;
         }
       )
       .then(res => res.json())
       .then(
         (response) => {
-          // success, try to extract retail account id
-          return self.getRetailAccountId(response.accounts, function(accountId) {
-            /*
-            // success, first try to fill transactions from localstorage
-            // todo: make this work
-            this.fillTransactionsFromLocalStorage();
-            */
-            // try to get transactions from api
-            self.populateTransactions(accountId, accessToken);
-          });
+          self.populateTransactions(accessToken, response.content.accountUid, response.content.defaultCategory);
         },
         (error) => {
-          // todo: sort out this setstate
-          this.setState({
-            error
-          });
+          console.log(error);
         }
       )
   }
 
-  logout(accessToken = false) {
+  populateTransactions(accessToken, accountUid, categoryUid) {
+    let self = this;
+
+    let authParams = this.authParams(accessToken);
+    let apiUrl = '/apiproxy/starling/transactions';
+
+    authParams.headers.accountUid = accountUid;
+    authParams.headers.categoryUid = categoryUid;
+
+    apiUrl = this.generateTransactionParams(apiUrl, accountUid);
+
+    fetch(apiUrl, authParams)
+      .then(
+        (response) => {
+            if(response.status !== 200) {
+              // did not get a 200, log the user out
+              // TODO: some kind of error message?
+              self.logOut();
+            }
+
+            return response;
+        }
+      )
+      .then(res => res.json())
+      .then(
+        (response) => {
+          self.processApiTransactions(response.content, accountUid);
+        },
+        (error) => {
+          console.log(error);
+        }
+      )
+
+    return;
+  }
+
+  /**
+   * Process transactions from the api
+   * @param  {} transactions Straight from the api
+   * @return {} filtered travel transactions
+   */
+  processApiTransactions(transactions, accountId) {
+    self = this;
+    transactions.forEach(function(transaction) {
+      // detect tfl transactions
+      if (!self.transactionHasBeenProcessed(transaction) && self.isTflTransaction(transaction)) {
+        self.transactionsForTravel.push({
+            // only take what is needed out of the transaction
+            account_id: accountId,
+            amount: transaction.amount.minorUnits * -1,
+            created: transaction.transactionTime,
+            id: transaction.feedItemUid
+        });
+      }
+      // make sure we record the date of the last processed transaction
+      self.travelTransactionsLastDate = transaction.created;
+
+      self.usedTxKeys.push(transaction.feedItemUid);
+    });
+  }
+
+  // detect a tfl transaction
+  isTflTransaction(transaction) {
+    return transaction.counterPartyName.toLowerCase().includes('mickey mouse');
+  }
+
+  logOut(accessToken = false) {
+    // stop the loop if it hasn't finished yet
+    this.continueLoop = false;
   }
 }
 

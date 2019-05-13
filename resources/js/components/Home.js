@@ -92,6 +92,11 @@ class Home extends Component {
                 yearMonths:   travelTotals.yearMonths,
                 yearTotals:   travelTotals.yearTotals,
             });
+
+            // starling only needs one iteration
+            if (self.currentBank === 'starling') {
+                self.bank.loadingIsComplete = true;
+            }
         }
     }, 1 * 1000); // first int is seconds
   }
@@ -107,7 +112,7 @@ class Home extends Component {
             self.bank = new Starling();
         }
         // query the api for an account id
-        self.bank.fetchAccountId(self.accessToken);
+        self.bank.beginTransactionsProcess(self.accessToken);
     });
   }
 
@@ -179,7 +184,7 @@ class Home extends Component {
    */
   logOut() {
     // log out of bank
-    this.bank.logout(this.accessToken);
+    this.bank.logOut(this.accessToken);
     // log out of laravel
     this.logoutOfLaravel();
     // clear localstorage
@@ -205,10 +210,19 @@ class Home extends Component {
       const tflZones = [1,2,3,4,5,6,7,8,9].map((num) =>
         <option key={num} value={num}>{num}</option>
       );
+
+      const monthCount = Object.keys(this.state.yearMonths).length;
+
       return (
         <div>
           <Loader daysPercentage={this.state.percentage} loadingIsComplete={this.state.loadingIsComplete} />
-          <GraphAmounts yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} yearMonths={this.state.yearMonths} monzoMonthlyAverage={this.maths.getMonthlyAverage(this.state.fullTotal, this.bank.sinceDate)} />
+          <GraphAmounts
+            yearlyAmount={this.state.yearlyAmount}
+            clubAmount={this.state.clubAmount}
+            yearMonths={this.state.yearMonths}
+            monthlyAverage={this.maths.getMonthlyAverageFromMonthCount(this.state.fullTotal, monthCount)}
+            currentBank={this.currentBank}
+          />
           <div className="zone-selector">
             From zone
             <select id="zoneFromSelector" className="form-control" onChange={this.setFromZone} value={this.state.fromZone}>
@@ -220,10 +234,15 @@ class Home extends Component {
             </select>
           </div>
           <div className="tfl-amount">
-            <TflAmount yearlyAmount={this.state.yearlyAmount} clubAmount={this.state.clubAmount} monzoMonthlyAverage={this.maths.getMonthlyAverage(this.state.fullTotal, this.bank.sinceDate)} />
+            <TflAmount
+              yearlyAmount={this.state.yearlyAmount}
+              clubAmount={this.state.clubAmount}
+              monthlyAverage={this.maths.getMonthlyAverageFromMonthCount(this.state.fullTotal, monthCount)}
+              fullTotal={this.state.fullTotal}
+            />
           </div>
           <div className="log-out">
-            <button className="logout" onClick={this.logOut}>Logout</button>
+            <button className={this.currentBank} onClick={this.logOut}>Logout</button>
           </div>
         </div>
       )

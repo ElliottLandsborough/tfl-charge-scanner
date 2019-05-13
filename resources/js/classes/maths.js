@@ -204,6 +204,19 @@ class Maths {
 
     return 0;
   }
+
+  getMonthlyAverageFromMonthCount(fullTotal = 0, monthCount = 1)
+  {
+    // avoid zero division
+    if (monthCount == 0) {
+        return 0;
+    }
+
+    // convert the full total to a positive number of pounds/pence
+    fullTotal = fullTotal * -1 / 100;
+    // the total equates to this much per month
+    return (fullTotal / monthCount).toFixed(2);
+  }
 }
 
 export default Maths;

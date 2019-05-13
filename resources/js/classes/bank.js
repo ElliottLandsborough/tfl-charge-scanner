@@ -69,9 +69,18 @@ class Bank {
     return (transaction.account_id == accountId);
   }
 
-  // detect a tfl transaction
-  isTflTransaction(transaction) {
-    return (transaction.category == 'transport' && transaction.description.toLowerCase().includes('tfl.gov.uk'));
+  generateTransactionParams(apiUrl = '', accountUid = '', changesSince = false) {
+    const monzoApi = this.apiUrl;
+
+    if (!changesSince) {
+        changesSince = this.getSinceDate();
+    }
+
+    let params = {
+      'changesSince': changesSince,
+    };
+
+    return apiUrl + '?' + this.urlEncode(params);
   }
 }
 

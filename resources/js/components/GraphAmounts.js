@@ -43,8 +43,16 @@ class GraphAmounts extends Component {
       monzoPayments.push(self.travelTotalPositiveInteger(self.props.yearMonths[value]));
       tflPrices.push(yealyAmount);
       clubPrices.push(clubAmount);
-      monzoPrices.push(self.props.monzoMonthlyAverage);
+      monzoPrices.push(self.props.monthlyAverage);
     });
+
+    let backgroundColor = '#fee6e8';
+    let borderColor = '#fd3a4a';
+
+    if (this.props.currentBank === 'starling') {
+        backgroundColor = '#ddcdff';
+        borderColor = '#7433ff';
+    }
 
     const barChartData = {
         labels: labels,
@@ -67,7 +75,7 @@ class GraphAmounts extends Component {
           borderColor: '#00a9a1',
           borderWidth: 1
         },{
-          label: 'Average Monzo per month',
+          label: 'Average spend per month',
           data: monzoPrices,
           type: 'line',
           //showLine: false
@@ -76,10 +84,10 @@ class GraphAmounts extends Component {
           borderColor: '#aaa',
           borderWidth: 1
         },{
-          label: 'Monzo payments',
+          label: this.props.currentBank.charAt(0).toUpperCase() + this.props.currentBank.slice(1) + ' payments',
           data: monzoPayments,
-          backgroundColor: '#fee6e8',
-          borderColor: '#fd3a4a',
+          backgroundColor: backgroundColor,
+          borderColor: borderColor,
           borderWidth: 1,
         }]
     };
