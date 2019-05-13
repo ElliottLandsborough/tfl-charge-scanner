@@ -12,11 +12,13 @@
 */
 
 Route::get('/', 'MainController@home')->name('home');
+Route::get('/help', 'MainController@help')->name('help');
 Route::get('/logout', 'MainController@logout')->name('logout');
 Route::get('/credentials', 'MainController@credentials')->name('credentials');
 
 // monzo
 Route::get('/auth/monzo', 'MonzoController@authUrl')->name('auth.monzo');
+Route::post('/auth/monzo', 'MonzoController@authUrlJson')->name('auth.monzo.post');
 Route::get('/callback/monzo', 'MonzoController@callback')->name('callback.monzo');
 Route::get('/credentials/monzo', 'MonzoController@credentials')->name('credentials.monzo');
 

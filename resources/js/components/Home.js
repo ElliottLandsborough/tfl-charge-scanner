@@ -3,6 +3,7 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router-dom'
 
+import Swal from 'sweetalert2'
 import dateParse from 'date-fns/parse'
 import dateDiffInDays from 'date-fns/difference_in_days'
 
@@ -178,6 +179,58 @@ class Home extends Component {
     fetch('/logout');
   }
 
+  // grab the id/secret and use it to generate an auth URL
+  authWithUserInput(e) {
+    e.preventDefault();
+    let url = '';
+
+    (async function getFormValues () {
+      const {value: formValues} = await Swal.fire({
+        title: 'Access Key Input',
+        html:
+          '<input id="swal-input1" class="swal2-input" placeholder="Client ID">' +
+          '<input id="swal-input2" class="swal2-input" placeholder="Client Secret">' +
+          '<a target="_blank" href="/help">help</a>',
+        focusConfirm: false,
+        preConfirm: () => {
+          return [
+            document.getElementById('swal-input1').value,
+            document.getElementById('swal-input2').value
+          ]
+        }
+      })
+      if (formValues[0].length && formValues[1].length) {
+        let formData = new FormData();
+        formData.append('client_id', formValues[0]);
+        formData.append('client_secret', formValues[1]);
+
+        fetch('/auth/monzo', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          }
+        })
+        .then(
+          (response) => {
+            if(response.status !== 200) {
+
+            }
+            return response;
+          }
+        )
+        .then(res => res.json())
+        .then(
+          (response) => {
+            if (typeof response.url !== 'undefined') {
+              window.location.href = response.url;
+            }
+          }
+        );
+      }
+    })()
+  }
+
   /**
    * Logs a user out
    * @return {[type]} [description]
@@ -200,7 +253,7 @@ class Home extends Component {
     let starlingButton;
 
     if (process.env.MIX_MONZO_ENABLE === 'true') {
-      monzoButton = <p><a className='auth-button monzo' href='/auth/monzo'>Authorize with Monzo</a></p>;
+      monzoButton = <p><a className='auth-button monzo' href='#' onClick={this.authWithUserInput}>Authorize with Monzo</a></p>;
     }
 
     if (process.env.MIX_STARLING_ENABLE === 'true') {
