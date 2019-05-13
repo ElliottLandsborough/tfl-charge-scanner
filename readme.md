@@ -38,8 +38,8 @@ docker-compose up -d
 ```
 
 ## Todo
- - starling
  - make sure state is only changed when necessary
  - clean up classes
  - comment everything
  - separate concerns
+ - allow user to enter their monzo api keys through the gui
