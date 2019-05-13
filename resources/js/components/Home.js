@@ -196,13 +196,24 @@ class Home extends Component {
   render() {
     const { error, isAuthorized, items, travelTotals } = this.state;
 
+    let monzoButton;
+    let starlingButton;
+
+    if (process.env.MIX_MONZO_ENABLE === 'true') {
+      monzoButton = <p><a className='auth-button monzo' href='/auth/monzo'>Authorize with Monzo</a></p>;
+    }
+
+    if (process.env.MIX_STARLING_ENABLE === 'true') {
+      starlingButton = <p><a className='auth-button starling' href='/auth/starling'>Authorize with Starling</a></p>;
+    }
+
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isAuthorized) {
       return (
         <div class="guest-container">
-          <p><a className='auth-button monzo' href='/auth/monzo'>Authorize with Monzo</a></p>
-          <p><a className='auth-button starling' href='/auth/starling'>Authorize with Starling</a></p>
+          {monzoButton}
+          {starlingButton}
           <p>This app makes a graph of your monthly spend on the London transport system. Please authorize to continue.</p>
         </div>
       );
