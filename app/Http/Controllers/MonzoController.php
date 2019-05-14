@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\MainController;
 use App\Services\AuthService;
 use App\Services\MonzoAuth;
 use Illuminate\Http\Request;
@@ -12,7 +11,8 @@ class MonzoController extends MainController
     protected $authorizer;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param AuthService $authService The AuthService object.
      * @param MonzoAuth   $authorizer  The authorizer object.
      */
@@ -43,7 +43,8 @@ class MonzoController extends MainController
     }
 
     /**
-     * Redirect a user to an auth url
+     * Redirect a user to an auth url.
+     *
      * @return [Function] Redirect to auth url.
      */
     public function authUrl(Request $request)
@@ -52,7 +53,8 @@ class MonzoController extends MainController
     }
 
     /**
-     * Generate the auth URL
+     * Generate the auth URL.
+     *
      * @return [String] Auth URL
      */
     public function generateAuthUrl(Request $request)
@@ -61,7 +63,8 @@ class MonzoController extends MainController
     }
 
     /**
-     * Return json array containing auth URL
+     * Return json array containing auth URL.
+     *
      * @return [String] Auth URL
      */
     public function authUrlJson(Request $request)

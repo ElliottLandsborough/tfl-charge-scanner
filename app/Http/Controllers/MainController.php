@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
 
@@ -11,7 +10,8 @@ class MainController extends Controller
     protected $authorizer;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param AuthService $authorizer The AuthService object.
      */
     public function __construct(AuthService $authorizer)
@@ -20,7 +20,8 @@ class MainController extends Controller
     }
 
     /**
-     * Home page
+     * Home page.
+     *
      * @return Function view() Render the home view.
      */
     public function home()
@@ -29,7 +30,8 @@ class MainController extends Controller
     }
 
     /**
-     * Redirect a user to an auth url
+     * Redirect a user to an auth url.
+     *
      * @return [Function] Redirect to auth url.
      */
     public function authUrl(Request $request)
@@ -37,8 +39,10 @@ class MainController extends Controller
     }
 
     /**
-     * Set the current bank name in the session
-     * @param  String $currentBank
+     * Set the current bank name in the session.
+     *
+     * @param string $currentBank
+     *
      * @return App\Http\Controllers\MainController $this
      */
     public function setCurrentBankInSession(Request $request, string $currentBank)
@@ -49,8 +53,10 @@ class MainController extends Controller
     }
 
     /**
-     * Callback url
-     * @param  Request $request
+     * Callback url.
+     *
+     * @param Request $request
+     *
      * @return Function redirect() Redirect to home
      */
     public function callback(Request $request)
@@ -63,8 +69,10 @@ class MainController extends Controller
     }
 
     /**
-     * Returns the credentials in a json array
-     * @param  Request $request
+     * Returns the credentials in a json array.
+     *
+     * @param Request $request
+     *
      * @return Function response() Returns json reponse object
      */
     public function credentials(Request $request)
@@ -88,8 +96,10 @@ class MainController extends Controller
     }
 
     /**
-     * Logs a user out
-     * @param  Request $request
+     * Logs a user out.
+     *
+     * @param Request $request
+     *
      * @return 200 response with json array
      */
     public function logout(Request $request)

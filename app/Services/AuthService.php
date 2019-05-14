@@ -3,11 +3,11 @@
 namespace App\Services;
 
 use App;
-use stdClass;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Cache;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException; // 400 level errors
+use GuzzleHttp\Exception\ClientException;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
+use stdClass; // 400 level errors
 
 /**
  * Some general monzo api stuff
@@ -26,8 +26,10 @@ class AuthService
     }
 
     /**
-     * Make callbackurl settable by public
+     * Make callbackurl settable by public.
+     *
      * @param string $url the callback url
+     *
      * @return MonzoAuth $this
      */
     public function setCallBackUrl(string $url)
@@ -38,7 +40,8 @@ class AuthService
     }
 
     /**
-     * Make api client id settable by public
+     * Make api client id settable by public.
+     *
      * @param string $apiClientId The api client id
      */
     public function setApiClientId(string $apiClientId)
@@ -49,7 +52,8 @@ class AuthService
     }
 
     /**
-     * Make api secret settable by public
+     * Make api secret settable by public.
+     *
      * @param string $apiSecret The api secret
      */
     public function setApiSecret(string $apiSecret)
@@ -60,7 +64,8 @@ class AuthService
     }
 
     /**
-     * Make $credentials gettable by public
+     * Make $credentials gettable by public.
+     *
      * @return [object] Usually this is an object that the monzo api returned
      */
     public function getCredentials()
@@ -69,8 +74,10 @@ class AuthService
     }
 
     /**
-     * Setter for credentials
+     * Setter for credentials.
+     *
      * @param [type] $credentials [description]
+     *
      * @return MonzoAuth $this
      */
     protected function setCredentialsFromObject($credentials)
@@ -81,7 +88,8 @@ class AuthService
     }
 
     /**
-     * Returns the oAuth url to start the auth process
+     * Returns the oAuth url to start the auth process.
+     *
      * @return [string] The url to forward the user to
      */
     public function generateAuthUrl(string $urlString)
@@ -94,18 +102,20 @@ class AuthService
         Cache::put($state, 'true', $expiresAt);
 
         $urlParams = [
-            'client_id' => $this->apiClientId,
-            'redirect_uri' => $this->callBackUrl,
+            'client_id'     => $this->apiClientId,
+            'redirect_uri'  => $this->callBackUrl,
             'response_type' => 'code',
-            'state' => $state
+            'state'         => $state,
         ];
 
-        return $urlString . '?' . http_build_query($urlParams);
+        return $urlString.'?'.http_build_query($urlParams);
     }
 
     /**
-     * Does an oauth request
+     * Does an oauth request.
+     *
      * @param [array] $formParams e.g grant_type/client_id/client_secret/
+     *
      * @return [object] the response
      */
     protected function oauthRequest($formParams)
@@ -114,8 +124,8 @@ class AuthService
         $client = new Client();
 
         try {
-            $response = $client->request('POST', $this->apiUrl . $this->tokenPath, [
-                'form_params' => $formParams
+            $response = $client->request('POST', $this->apiUrl.$this->tokenPath, [
+                'form_params' => $formParams,
             ]);
         } catch (ClientException $e) {
             die($e->getMessage()); // send message to flash - 400
@@ -131,9 +141,11 @@ class AuthService
     }
 
     /**
-     * Callback function
+     * Callback function.
+     *
      * @param string $state State var to be checked with the cache
      * @param string $code  Code generated at monzo's end
+     *
      * @return MonzoAuth $this
      */
     public function setCredentialsFromCallback(string $state, string $code)
@@ -147,11 +159,11 @@ class AuthService
 
         // what we need to send to the monzo api
         $formParams = [
-            'grant_type' => 'authorization_code',
-            'client_id' => $this->apiClientId,
+            'grant_type'    => 'authorization_code',
+            'client_id'     => $this->apiClientId,
             'client_secret' => $this->apiSecret,
-            'redirect_uri' => $this->callBackUrl,
-            'code' => $code
+            'redirect_uri'  => $this->callBackUrl,
+            'code'          => $code,
         ];
 
         // do the request
@@ -169,8 +181,10 @@ class AuthService
 
     /**
      * Check if the creds are going to expire soon
-     * Runs whenever js requests a key from the php api
-     * @param  [Object] $credentials e.g the creds stored in the session in this example
+     * Runs whenever js requests a key from the php api.
+     *
+     * @param [Object] $credentials e.g the creds stored in the session in this example
+     *
      * @return MonzoAuth $this
      */
     public function checkExpires($credentials)
@@ -207,17 +221,18 @@ class AuthService
     }
 
     /**
-     * Renews an access token through the monzo api (can only be done once)
+     * Renews an access token through the monzo api (can only be done once).
+     *
      * @return MonzoAuth $this
      */
     protected function renewAccessToken()
     {
         // set some params
         $formParams = [
-            'grant_type' => 'refresh_token',
-            'client_id' => $this->apiClientId,
+            'grant_type'    => 'refresh_token',
+            'client_id'     => $this->apiClientId,
             'client_secret' => $this->apiSecret,
-            'refresh_token' => $this->credentials->refresh_token
+            'refresh_token' => $this->credentials->refresh_token,
         ];
 
         // run the query
@@ -234,10 +249,12 @@ class AuthService
     }
 
     /**
-     * Run a get request with some optional headers
-     * @param  [String] $path    e.g /v2/transactions
-     * @param  [Array]  $headers e.g ['Authorization' => 'Bearer abcdefghijklmnopqrstuvwxyz1234567890']
-     * @return [Object]          Whatever the api has responded if an exception wasn't thrown
+     * Run a get request with some optional headers.
+     *
+     * @param [String] $path    e.g /v2/transactions
+     * @param [Array]  $headers e.g ['Authorization' => 'Bearer abcdefghijklmnopqrstuvwxyz1234567890']
+     *
+     * @return [Object] Whatever the api has responded if an exception wasn't thrown
      */
     public function apiGetRequest($path = '', $headers = [])
     {
@@ -245,7 +262,7 @@ class AuthService
 
         try {
             $response = $client->request('GET', $path, [
-                'headers' => $headers
+                'headers' => $headers,
             ]);
         } catch (ClientException $e) {
             die($e->getMessage());

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App;
-use App\Http\Controllers\MainController;
 use App\Services\AuthService;
 use App\Services\StarlingAuth;
 use Illuminate\Http\Request;
@@ -13,7 +12,8 @@ class StarlingController extends MainController
     protected $authorizer;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param AuthService  $authService The AuthService object.
      * @param StarlingAuth $authorizer  The authorizer object.
      */
@@ -27,7 +27,8 @@ class StarlingController extends MainController
     }
 
     /**
-     * Redirect a user to an auth url
+     * Redirect a user to an auth url.
+     *
      * @return [Function] Redirect to auth url.
      */
     public function authUrl(Request $request)
@@ -36,19 +37,22 @@ class StarlingController extends MainController
         if (!App::environment('production')) {
             $url = 'https://oauth-sandbox.starlingbank.com/';
         }
+
         return redirect($this->setCurrentBankInSession($request, 'starling')->authorizer->generateAuthUrl($url));
     }
 
     /**
-     * So, starlings API auth is not compatible with CORS so I am proxying my calls through php :*(
-     * @param  [String] $endpoint The endpoint name e.g 'accounts'
+     * So, starlings API auth is not compatible with CORS so I am proxying my calls through php :*(.
+     *
+     * @param [String] $endpoint The endpoint name e.g 'accounts'
+     *
      * @return [Function] Json Response
      */
     public function proxy($endpoint = '')
     {
         // get the auth headers
         $headers = [
-            'Authorization' => app('request')->header('Authorization', false)
+            'Authorization' => app('request')->header('Authorization', false),
         ];
 
         // super primitive protection, die if there's no endpoint picked
@@ -73,7 +77,7 @@ class StarlingController extends MainController
             ];
 
             // generate the URL
-            $path = "/api/v2/feed/account/$accountUid/category/$categoryUid?" . http_build_query($params);
+            $path = "/api/v2/feed/account/$accountUid/category/$categoryUid?".http_build_query($params);
         }
 
         // run the get request with the headers and the url
@@ -87,10 +91,10 @@ class StarlingController extends MainController
             // grab the first account for now
             // TODO: is this right? do we want multiple accounts? or maybe account detection?
             $content = [
-                'accountUid' => $response->accounts[0]->accountUid,
+                'accountUid'      => $response->accounts[0]->accountUid,
                 'defaultCategory' => $response->accounts[0]->defaultCategory,
             ];
-        } else if (isset($response->feedItems)) {
+        } elseif (isset($response->feedItems)) {
             // transactions were returned
             $content = $response->feedItems;
         } else {

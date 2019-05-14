@@ -3,7 +3,7 @@
 namespace App\Services;
 
 /**
- * The monzo auth class
+ * The monzo auth class.
  */
 class MonzoAuth extends AuthService
 {
