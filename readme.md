@@ -1,4 +1,4 @@
-# TFL Charge Scanner for Monzo/Starling
+# TFL Charge Scanner
 
 https://londoncommute.uk
 
@@ -10,12 +10,12 @@ Laravel 5, React, Docker
 
 ## Why?
 
-...
+To learn the [Monzo](https://docs.monzo.com/)/[Starling](https://developer.starlingbank.com/docs) APIs.
 
 ## How?
 ```
-git clone git@github.com:ElliottLandsborough/monzo-balance.git
-cd monzo-balance
+git clone git@github.com:ElliottLandsborough/tfl-charge-scanner.git
+cd tfl-charge-scanner
 composer install
 cp .env.example .env
 php artisan key:generate
