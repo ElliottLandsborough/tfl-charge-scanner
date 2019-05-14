@@ -38,4 +38,5 @@ docker-compose up -d
 ```
 
 ## Todo
+ - mobile layout
  - local storage?
