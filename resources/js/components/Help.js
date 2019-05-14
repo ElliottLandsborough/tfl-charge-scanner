@@ -3,6 +3,9 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router-dom'
 
+/**
+ * Help page for monzo api keys
+ */
 class Help extends Component {
 
   render() {

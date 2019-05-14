@@ -16,6 +16,9 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/**
+ * Render the whole app, map some routes to some components
+ */
 class App extends Component {
   render () {
     return (

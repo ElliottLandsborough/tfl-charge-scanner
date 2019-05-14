@@ -233,7 +233,13 @@ class AuthService
         return $this;
     }
 
-    public function apiGetRequest($path = null, $headers = [])
+    /**
+     * Run a get request with some optional headers
+     * @param  [String] $path    e.g /v2/transactions
+     * @param  [Array]  $headers e.g ['Authorization' => 'Bearer abcdefghijklmnopqrstuvwxyz1234567890']
+     * @return [Object]          Whatever the api has responded if an exception wasn't thrown
+     */
+    public function apiGetRequest($path = '', $headers = [])
     {
         $client = new Client(['base_uri' => $this->apiUrl]);
 

@@ -38,8 +38,6 @@ docker-compose up -d
 ```
 
 ## Todo
- - make sure state is only changed when necessary
  - clean up classes
- - comment everything
  - separate concerns
  - local storage?

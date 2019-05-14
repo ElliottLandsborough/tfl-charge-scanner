@@ -14,7 +14,6 @@ class Monzo extends Bank {
 
   /**
    * Get the account id from the monzo api
-   * @return {[type]} [description]
    */
   fetchAccountId(accessToken) {
     let self = this;
@@ -70,10 +69,16 @@ class Monzo extends Bank {
     });
   }
 
-  // this is a bit weird because we have to call the api once at a time...
+  /**
+   * Populate transactions 100 at a time
+   * @param  {String} accountId   Account ID
+   * @param  {String} accessToken Api access token
+   * @return {Void}
+   */
+  // this is a bit weird because i call the api once per 100 transactions...
   // maybe do it by month instead?
   // TODO: clean this up!!!
-  populateTransactions(accountId, accessToken) {
+  populateTransactions(accountId = '', accessToken = '') {
     let self = this;
     // TODO: handle the 401 here, probably clear the credentials
     // and set the state back to isAuthorized: false, clear the old creds
@@ -115,7 +120,13 @@ class Monzo extends Bank {
     transactionsLoop();
   }
 
-  generateTransactionUrl(accountId, since = false) {
+  /**
+   * Generate a full api url with some params on the end
+   * @param  {String}  accountId The account id
+   * @param  {Boolean} since     Optional, can be false or a date string
+   * @return {String}            The url with the params
+   */
+  generateTransactionUrl(accountId = '', since = false) {
     const monzoApi = this.apiUrl;
 
     if (!since) {
@@ -160,17 +171,26 @@ class Monzo extends Bank {
     });
   }
 
-  // detect a tfl transaction
+  /**
+   * detect a tfl transaction by scanning the string
+   * @param  {Object}  transaction  The transaction object
+   * @return {Boolean}              True if it matches
+   */
   isTflTransaction(transaction) {
     return (transaction.category == 'transport' && transaction.description.toLowerCase().includes('tfl.gov.uk'));
   }
 
+  /**
+   * LogOut stuff for this class only
+   * @param  {Boolean} accessToken [description]
+   * @return {[type]}              [description]
+   */
   logOut(accessToken = false) {
     // stop the loop
     this.continueLoop = false;
     // can only log out if we have an access token
     if (accessToken !== false) {
-        // async get all logout urls, no need to process response
+        // async get all logout from monzo api, no need to process response
         fetch(this.apiUrl + '/oauth2/logout', this.authParams(accessToken, 'POST')); // log out of monzo api
     }
   }

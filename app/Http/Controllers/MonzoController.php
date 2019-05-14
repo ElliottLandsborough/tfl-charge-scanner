@@ -52,12 +52,17 @@ class MonzoController extends MainController
 
     /**
      * Generate the auth URL
+     * @return [String] Auth URL
      */
     public function generateAuthUrl(Request $request)
     {
         return $this->setCurrentBankInSession($request, 'monzo')->authorizer->generateAuthUrl('https://auth.monzo.com/');
     }
 
+    /**
+     * Return json array containing auth URL
+     * @return [String] Auth URL
+     */
     public function authUrlJson(Request $request)
     {
         return response()->json(['status' => 'success', 'url' => $this->generateAuthUrl($request)]);

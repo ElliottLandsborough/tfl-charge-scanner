@@ -10,8 +10,9 @@ class Bank {
 
   /**
    * Returns the auth params
-   * @param  {String} method Http verb e.g GET/POST
-   * @return {Object}        The auth params
+   * @parame {String} accessToken The access token
+   * @param  {String} method      Http verb e.g GET/POST
+   * @return {Object}             The auth params
    */
   authParams(accessToken = '', method = 'get') {
     return {
@@ -22,16 +23,25 @@ class Bank {
     }
   }
 
+  /**
+   * Gets a global var
+   * @return {Object}
+   */
   getTransactionsForTravel() {
     return this.transactionsForTravel;
   }
 
+  /**
+   * Check if loading has finished yet
+   * @return {Boolean} true when loading has finished
+   */
   getLoadingIsComplete() {
     return (this.loadingIsComplete === true);
   }
 
   /**
    * Get the date to start counting transactions from
+   * @return {String} Formatted date
    */
   getSinceDate() {
     // subtract 12 months
@@ -59,28 +69,23 @@ class Bank {
     return out.join('&');
   }
 
-  // check if transaction has already been processed
+  /**
+   * check if transaction has already been processed
+   * @param  {Object} transaction [description]
+   * @return {boolean}            [description]
+   */
   transactionHasBeenProcessed(transaction) {
     return (self.usedTxKeys.includes(transaction.id))
   }
 
-  // check if transaction matches account it
+  /**
+   * check if transaction matches account it
+   * @param  {Object} transaction [description]
+   * @param  {String} accountId   [description]
+   * @return {Boolean}            [description]
+   */
   transactionMatchesAccount(transaction, accountId) {
     return (transaction.account_id == accountId);
-  }
-
-  generateTransactionParams(apiUrl = '', accountUid = '', changesSince = false) {
-    const monzoApi = this.apiUrl;
-
-    if (!changesSince) {
-        changesSince = this.getSinceDate();
-    }
-
-    let params = {
-      'changesSince': changesSince,
-    };
-
-    return apiUrl + '?' + this.urlEncode(params);
   }
 }
 

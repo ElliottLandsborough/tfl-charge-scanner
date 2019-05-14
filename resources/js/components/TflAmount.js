@@ -2,6 +2,9 @@
 
 import React, {Component} from 'react';
 
+/**
+ * The total/monthly prices of card/tfl/commuterclub
+ */
 class TflAmount extends Component {
 
   constructor(props) {

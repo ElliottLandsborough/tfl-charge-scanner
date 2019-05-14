@@ -16,6 +16,9 @@ import GraphAmounts from './GraphAmounts'
 import TflAmount from './TflAmount'
 import Loader from './Loader'
 
+/**
+ * Home page
+ */
 class Home extends Component {
 
   bank = false;
@@ -102,11 +105,17 @@ class Home extends Component {
     }, 1 * 1000); // first int is seconds
   }
 
+  /**
+   * Start the process of getting the transactions from the api
+   * @return {[type]} [description]
+   */
   startApiProcess() {
     let self = this;
 
     this.initializeAuthenticationWithCallback(function() {
+        // once the auth has finished, if a bank name was set in the session,
         if (self.currentBank === 'monzo') {
+            // initialize the bank based on tha name
             self.bank = new Monzo();
         }
         if (self.currentBank === 'starling') {
@@ -174,17 +183,25 @@ class Home extends Component {
     this.setState({fromZone: fromZone, toZone: toZone, yearlyAmount: yearlyAmount, clubAmount: clubAmount});
   }
 
-  // log out of laravels everything
+  /**
+   * Fetch laravel logout route
+   * Assuming laravel is working, run laravels logout stuff,
+   * Clear the session etc, possibly invalidate api keys
+   */
   logoutOfLaravel() {
     fetch('/logout');
   }
 
-  // grab the id/secret and use it to generate an auth URL
+  /**
+   * Grab the id/secret from the dialogue and use it to generate an auth URL, forward user to it
+   * @param  {event} e  The click event
+   */
   authWithUserInput(e) {
     e.preventDefault();
     let url = '';
 
     (async function getFormValues () {
+      // dialogue box asking for the keys with a link to the help page
       const {value: formValues} = await Swal.fire({
         title: 'Access Key Input',
         html:
@@ -199,11 +216,12 @@ class Home extends Component {
           ]
         }
       })
+      // did the user fill both boxes?
       if (formValues[0].length && formValues[1].length) {
         let formData = new FormData();
         formData.append('client_id', formValues[0]);
         formData.append('client_secret', formValues[1]);
-
+        // get a url from the api to forward the user to
         fetch('/auth/monzo', {
           method: 'POST',
           body: formData,
@@ -213,15 +231,15 @@ class Home extends Component {
         })
         .then(
           (response) => {
-            if(response.status !== 200) {
-
+            if(response.status == 200) {
+                return response;
             }
-            return response;
           }
         )
-        .then(res => res.json())
+        .then(res => res.json()) // parse the json
         .then(
           (response) => {
+            // forward the user to the url
             if (typeof response.url !== 'undefined') {
               window.location.href = response.url;
             }
@@ -232,8 +250,7 @@ class Home extends Component {
   }
 
   /**
-   * Logs a user out
-   * @return {[type]} [description]
+   * Logs a user out of everything
    */
   logOut() {
     // log out of bank
@@ -252,10 +269,12 @@ class Home extends Component {
     let monzoButton;
     let starlingButton;
 
+    // if monzo is enabled in the env, show the monzo button, when its clicked run the dialogue
     if (process.env.MIX_MONZO_ENABLE === 'true') {
       monzoButton = <p><a className='auth-button monzo' href='#' onClick={this.authWithUserInput}>Authorize with Monzo</a></p>;
     }
 
+    // if starling is enabled in the env, show the starling button
     if (process.env.MIX_STARLING_ENABLE === 'true') {
       starlingButton = <p><a className='auth-button starling' href='/auth/starling'>Authorize with Starling</a></p>;
     }

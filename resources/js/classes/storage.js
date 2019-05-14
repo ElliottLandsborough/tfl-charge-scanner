@@ -1,4 +1,6 @@
+// currently not used at all
 class Storage {
+
   /**
    * Get any transactions already stored in localstorage and populate the state with them
    * @return {[type]} [description]
@@ -37,6 +39,9 @@ class Storage {
     localStorage.setItem('travelTransactionsLastDate', JSON.stringify(this.state.travelTransactionsLastDate));
   }
 
+  /**
+   * Remove everything from localStorage
+   */
   logout()
   {
     localStorage.clear();

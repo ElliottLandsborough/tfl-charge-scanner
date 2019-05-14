@@ -12,8 +12,7 @@ class Starling extends Bank {
   }
 
   /**
-   * Get the account id from the monzo api
-   * @return {[type]} [description]
+   * Get the account UID and category UID from the monzo api
    */
   fetchAccountId(accessToken) {
     let self = this;
@@ -41,6 +40,32 @@ class Starling extends Bank {
       )
   }
 
+  /**
+   * Generate a full api url with some params on the end
+   * @param  {String} apiUrl        The url of the api
+   * @param  {String} changesSince  Optional, set the since date to get the transactions from
+   * @return {String}               The full URL with the get params on the end
+   */
+  generateTransactionParams(apiUrl = '', changesSince = false) {
+    const monzoApi = this.apiUrl;
+
+    if (!changesSince) {
+        changesSince = this.getSinceDate();
+    }
+
+    let params = {
+      'changesSince': changesSince,
+    };
+
+    return apiUrl + '?' + this.urlEncode(params);
+  }
+
+  /**
+   * Populate transactions 100 at a time
+   * @param  {String} accessToken Api access token
+   * @param  {String} accountUid  Account UID
+   * @param  {String} categoryUid Category UID
+   */
   populateTransactions(accessToken, accountUid, categoryUid) {
     let self = this;
 
@@ -50,7 +75,7 @@ class Starling extends Bank {
     authParams.headers.accountUid = accountUid;
     authParams.headers.categoryUid = categoryUid;
 
-    apiUrl = this.generateTransactionParams(apiUrl, accountUid);
+    apiUrl = this.generateTransactionParams(apiUrl);
 
     fetch(apiUrl, authParams)
       .then(
@@ -73,14 +98,12 @@ class Starling extends Bank {
           console.log(error);
         }
       )
-
-    return;
   }
 
   /**
    * Process transactions from the api
-   * @param  {} transactions Straight from the api
-   * @return {} filtered travel transactions
+   * @param  {Object} transactions All the transactions from the API
+   * @param  {String} accountId    Account UID
    */
   processApiTransactions(transactions, accountId) {
     self = this;
@@ -102,12 +125,19 @@ class Starling extends Bank {
     });
   }
 
-  // detect a tfl transaction
+  /**
+   * detect a tfl transaction by scanning the string
+   * @param  {Object}  transaction  The transaction object
+   * @return {Boolean}              True if it matches
+   */
   isTflTransaction(transaction) {
     return transaction.counterPartyName.toLowerCase().includes('mickey mouse');
   }
 
-  logOut(accessToken = false) {
+  /**
+   * LogOut stuff for this class only
+   */
+  logOut() {
     // stop the loop if it hasn't finished yet
     this.continueLoop = false;
   }
