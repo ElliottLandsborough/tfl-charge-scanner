@@ -2,6 +2,8 @@
 
 https://londoncommute.uk
 
+[![Code Style](https://github.styleci.io/repos/164618259/shield?branch=master)](https://github.styleci.io/repos/164618259)
+
 ## What?
 
 Checks your transactions to see how much you waste on London transport (Have you considered buying a [bicycle from Amazon](https://amzn.to/2RK1qCz)?)
