@@ -57,7 +57,7 @@ class Bank {
    * @param  {object} params {var1: string, var2: lol}
    * @return {string}        'var1=string&var2=lol'
    */
-  urlEncode(params) {
+  urlEncode(params = {}) {
     var out = [];
 
     for (var key in params) {
@@ -74,7 +74,7 @@ class Bank {
    * @param  {Object} transaction [description]
    * @return {boolean}            [description]
    */
-  transactionHasBeenProcessed(transaction) {
+  transactionHasBeenProcessed(transaction = {}) {
     return (self.usedTxKeys.includes(transaction.id))
   }
 
@@ -84,7 +84,7 @@ class Bank {
    * @param  {String} accountId   [description]
    * @return {Boolean}            [description]
    */
-  transactionMatchesAccount(transaction, accountId) {
+  transactionMatchesAccount(transaction = {}, accountId = '') {
     return (transaction.account_id == accountId);
   }
 }

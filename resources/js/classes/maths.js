@@ -88,7 +88,7 @@ class Maths {
    * Calculate how much commuter club should cost based on a yearly price
    * @type {Number}
    */
-  calculateCommuterClub(yearlyAmount)
+  calculateCommuterClub(yearlyAmount = 0)
   {
     // REPRESENTATIVE EXAMPLE: Credit Limit: £1200. Interest: £67 Total payable: £1267 in 11 monthly instalments of £115. Representative 11.61% APR. Interest rate: 5.6% pa
     return ((yearlyAmount / 100 * 5.6) + yearlyAmount);
@@ -183,7 +183,7 @@ class Maths {
    * Find out how much someone spends per month
    * @return {Number} (e.g 92.47)
    */
-  getMonthlyAverage(fullTotal, sinceDate)
+  getMonthlyAverage(fullTotal = 0, sinceDate = false)
   {
     // convert the full total to a positive number of pounds/pence
     fullTotal = fullTotal * -1 / 100;
@@ -205,6 +205,10 @@ class Maths {
     return 0;
   }
 
+  /**
+   * Simple function to get an average cost by doing [amount] / [number of months]
+   * @type {Number}
+   */
   getMonthlyAverageFromMonthCount(fullTotal = 0, monthCount = 1)
   {
     // avoid zero division

@@ -38,6 +38,4 @@ docker-compose up -d
 ```
 
 ## Todo
- - clean up classes
- - separate concerns
  - local storage?

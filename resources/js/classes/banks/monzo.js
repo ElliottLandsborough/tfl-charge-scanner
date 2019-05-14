@@ -7,15 +7,17 @@ class Monzo extends Bank {
 
   /**
    * Gets run by the home component if auth was successful
+   * @param [String] accessToken
    */
-  beginTransactionsProcess(accessToken) {
+  beginTransactionsProcess(accessToken = '') {
     this.fetchAccountId(accessToken);
   }
 
   /**
    * Get the account id from the monzo api
+   * @param [String] accessToken
    */
-  fetchAccountId(accessToken) {
+  fetchAccountId(accessToken = '') {
     let self = this;
     fetch(this.apiUrl + '/accounts', this.authParams(accessToken))
       .then(
@@ -52,8 +54,11 @@ class Monzo extends Bank {
   /**
    * Check api response for account that matches 'uk_retail'.
    * Add to state if match exists.
+   * Run callback after response is done.
+   * @param [Object]  Accounts
+   * @param [Closure] Callback
    */
-  getRetailAccountId(accounts, callback) {
+  getRetailAccountId(accounts = [], callback) {
     const promises = []; // collect all promises here
 
     accounts.forEach(function(account) {
@@ -148,7 +153,7 @@ class Monzo extends Bank {
    * @param  {} transactions Straight from the api
    * @return {} filtered travel transactions
    */
-  processApiTransactions(transactions, accountId) {
+  processApiTransactions(transactions = [], accountId = '') {
     self = this;
     transactions.forEach(function(transaction) {
       // detect tfl transactions
@@ -176,7 +181,7 @@ class Monzo extends Bank {
    * @param  {Object}  transaction  The transaction object
    * @return {Boolean}              True if it matches
    */
-  isTflTransaction(transaction) {
+  isTflTransaction(transaction = {}) {
     return (transaction.category == 'transport' && transaction.description.toLowerCase().includes('tfl.gov.uk'));
   }
 

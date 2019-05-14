@@ -194,6 +194,7 @@ class Home extends Component {
 
   /**
    * Grab the id/secret from the dialogue and use it to generate an auth URL, forward user to it
+   * TODO: this probably belongs in the monzo bank class but its fine here for now.
    * @param  {event} e  The click event
    */
   authWithUserInput(e) {
