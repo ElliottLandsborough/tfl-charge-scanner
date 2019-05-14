@@ -2,77 +2,93 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Services\MonzoAuth;
+use App\Services\AuthService;
 use Illuminate\Http\Request;
 
 class MainController extends Controller
 {
-    private $monzoAuth;
+    protected $authorizer;
 
     /**
-     * Constructor
-     * @param MonzoAuth $monzoAuth The MonzoAuth object.
+     * Constructor.
+     *
+     * @param AuthService $authorizer The AuthService object.
      */
-    public function __construct(MonzoAuth $monzoAuth)
+    public function __construct(AuthService $authorizer)
     {
-        // get vars from config
-        $apiClientId = config('monzo.apiClientId');
-        $apiSecret = config('monzo.apiSecret');
-
-        $this->monzoAuth = $monzoAuth->setCallBackUrl(route('callback'))->setApiClientId($apiClientId)->setApiSecret($apiSecret);
+        $this->authorizer = $authorizer;
     }
 
     /**
-     * Home page
+     * Home page.
+     *
      * @return Function view() Render the home view.
      */
     public function home()
     {
-        return view('pages.home', ['url' => url('/auth')]);
+        return view('pages.home');
     }
 
     /**
-     * Redirect a user to an auth url
+     * Redirect a user to an auth url.
+     *
      * @return [Function] Redirect to auth url.
      */
-    public function authUrl()
+    public function authUrl(Request $request)
     {
-        return redirect($this->monzoAuth->generateAuthUrl());
     }
 
     /**
-     * Callback url
-     * @param  Request $request
+     * Set the current bank name in the session.
+     *
+     * @param string $currentBank
+     *
+     * @return App\Http\Controllers\MainController $this
+     */
+    public function setCurrentBankInSession(Request $request, string $currentBank)
+    {
+        $request->session()->put('current_bank', $currentBank);
+
+        return $this;
+    }
+
+    /**
+     * Callback url.
+     *
+     * @param Request $request
+     *
      * @return Function redirect() Redirect to home
      */
     public function callback(Request $request)
     {
-        $credentials = $this->monzoAuth->setCredentialsFromCallback($request->query('state'), $request->query('code'))->getCredentials();
+        $credentials = $this->authorizer->setCredentialsFromCallback($request->query('state'), $request->query('code'))->getCredentials();
 
-        $request->session()->put('monzo_auth', $credentials);
+        $request->session()->put('auth_credentials', $credentials);
 
         return redirect('/');
     }
 
     /**
-     * Returns the credentials in a json array
-     * @param  Request $request
+     * Returns the credentials in a json array.
+     *
+     * @param Request $request
+     *
      * @return Function response() Returns json reponse object
      */
     public function credentials(Request $request)
     {
         $array = [];
 
-        if ($request->session()->has('monzo_auth')) {
-            $credentials = $this->monzoAuth->checkExpires($request->session()->get('monzo_auth'))->getCredentials();
+        if ($request->session()->has('auth_credentials')) {
+            $credentials = $this->authorizer->checkExpires($request->session()->get('auth_credentials'))->getCredentials();
 
-            if ((array) $credentials != (array) $request->session()->get('monzo_auth')) {
-                $request->session()->put('monzo_auth', $credentials);
+            if ((array) $credentials != (array) $request->session()->get('auth_credentials')) {
+                $request->session()->put('auth_credentials', $credentials);
             }
         }
 
         if (isset($credentials->access_token)) {
+            $array['current_bank'] = ($request->session()->has('current_bank') ? $request->session()->get('current_bank') : false);
             $array['access_token'] = $credentials->access_token;
         }
 
@@ -80,14 +96,17 @@ class MainController extends Controller
     }
 
     /**
-     * Logs a user out
-     * @param  Request $request
+     * Logs a user out.
+     *
+     * @param Request $request
+     *
      * @return 200 response with json array
      */
     public function logout(Request $request)
     {
         // remove all session vars
-        $request->session()->forget('monzo_auth');
+        $request->session()->forget('current_bank');
+        $request->session()->forget('auth_credentials');
         $request->session()->flush();
 
         return response()->json(['status' => 'success']);

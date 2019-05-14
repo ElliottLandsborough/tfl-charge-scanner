@@ -1,21 +1,23 @@
-# Monzo Balance
+# TFL Charge Scanner
 
 https://londoncommute.uk
 
+[![Code Style](https://github.styleci.io/repos/164618259/shield?branch=master)](https://github.styleci.io/repos/164618259)
+
 ## What?
 
-Checks your monzo transactions to see how much you waste on London transport (Have you considered buying a [bicycle from Amazon](https://amzn.to/2RK1qCz)?)
+Checks your transactions to see how much you waste on London transport (Have you considered buying a [bicycle from Amazon](https://amzn.to/2RK1qCz)?)
 
 Laravel 5, React, Docker
 
 ## Why?
 
-...
+To learn the [Monzo](https://docs.monzo.com/)/[Starling](https://developer.starlingbank.com/docs) APIs.
 
 ## How?
 ```
-git clone git@github.com:ElliottLandsborough/monzo-balance.git
-cd monzo-balance
+git clone git@github.com:ElliottLandsborough/tfl-charge-scanner.git
+cd tfl-charge-scanner
 composer install
 cp .env.example .env
 php artisan key:generate
@@ -36,3 +38,7 @@ npm run prod
 ```
 docker-compose up -d
 ```
+
+## Todo
+ - mobile layout
+ - local storage?

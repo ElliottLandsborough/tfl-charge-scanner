@@ -3,6 +3,9 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom'
 
+/**
+ * Progress bar
+ */
 class Loader extends Component {
   constructor(props) {
     super(props)
@@ -24,7 +27,3 @@ class Loader extends Component {
 }
 
 export default Loader
-
-
-
-
