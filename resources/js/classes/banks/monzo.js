@@ -14,7 +14,7 @@ class Monzo extends Bank {
   }
 
   /**
-   * Get the account id from the monzo api
+   * Get the account id from the api
    * @param [String] accessToken
    */
   fetchAccountId(accessToken = '') {
@@ -195,7 +195,7 @@ class Monzo extends Bank {
     this.continueLoop = false;
     // can only log out if we have an access token
     if (accessToken !== false) {
-        // async get all logout from monzo api, no need to process response
+        // async logout from api, no need to process response
         fetch(this.apiUrl + '/oauth2/logout', this.authParams(accessToken, 'POST')); // log out of monzo api
     }
   }

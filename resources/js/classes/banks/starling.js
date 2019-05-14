@@ -12,7 +12,7 @@ class Starling extends Bank {
   }
 
   /**
-   * Get the account UID and category UID from the monzo api
+   * Get the account UID and category UID
    */
   fetchAccountId(accessToken) {
     let self = this;
@@ -47,8 +47,6 @@ class Starling extends Bank {
    * @return {String}               The full URL with the get params on the end
    */
   generateTransactionParams(apiUrl = '', changesSince = false) {
-    const monzoApi = this.apiUrl;
-
     if (!changesSince) {
         changesSince = this.getSinceDate();
     }

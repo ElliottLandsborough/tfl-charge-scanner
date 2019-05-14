@@ -14,7 +14,8 @@ class StarlingController extends MainController
 
     /**
      * Constructor
-     * @param MonzoAuth $monzoAuth The MonzoAuth object.
+     * @param AuthService  $authService The AuthService object.
+     * @param StarlingAuth $authorizer  The authorizer object.
      */
     public function __construct(AuthService $authService, StarlingAuth $authorizer)
     {

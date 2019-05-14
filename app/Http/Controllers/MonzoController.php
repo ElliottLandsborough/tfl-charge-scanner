@@ -13,7 +13,8 @@ class MonzoController extends MainController
 
     /**
      * Constructor
-     * @param MonzoAuth $monzoAuth The MonzoAuth object.
+     * @param AuthService $authService The AuthService object.
+     * @param MonzoAuth   $authorizer  The authorizer object.
      */
     public function __construct(AuthService $authService, MonzoAuth $authorizer, Request $request)
     {

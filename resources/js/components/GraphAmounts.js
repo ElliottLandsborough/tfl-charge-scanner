@@ -31,10 +31,10 @@ class GraphAmounts extends Component {
     let self = this;
     const labelDates = Object.keys(this.props.yearMonths);
     let labels = [];
-    let monzoPayments = [];
+    let contactlessPayments = [];
     let tflPrices = [];
     let clubPrices = [];
-    let monzoPrices = [];
+    let contactlessPrices = [];
 
     // set amount per month of commuter club and tfl travel card
     let yealyAmount = (self.props.yearlyAmount / 12).toFixed(2);
@@ -49,10 +49,10 @@ class GraphAmounts extends Component {
       // add to labels array
       labels.push(date);
       // add the amounts to their appropriate arrays
-      monzoPayments.push(self.travelTotalPositiveInteger(self.props.yearMonths[value]));
+      contactlessPayments.push(self.travelTotalPositiveInteger(self.props.yearMonths[value]));
       tflPrices.push(yealyAmount);
       clubPrices.push(clubAmount);
-      monzoPrices.push(self.props.monthlyAverage);
+      contactlessPrices.push(self.props.monthlyAverage);
     });
 
     // monzio graph colors
@@ -88,7 +88,7 @@ class GraphAmounts extends Component {
           borderWidth: 1
         },{
           label: 'Average spend per month',
-          data: monzoPrices,
+          data: contactlessPrices,
           type: 'line',
           //showLine: false
           fill: false,
@@ -97,7 +97,7 @@ class GraphAmounts extends Component {
           borderWidth: 1
         },{
           label: this.props.currentBank.charAt(0).toUpperCase() + this.props.currentBank.slice(1) + ' payments',
-          data: monzoPayments,
+          data: contactlessPayments,
           backgroundColor: backgroundColor,
           borderColor: borderColor,
           borderWidth: 1,
