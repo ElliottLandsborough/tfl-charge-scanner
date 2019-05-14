@@ -4,5 +4,5 @@
 </div>
 <footer class="footer">
 <p>No data is stored by this application.</p>
-<p><a href="https://github.com/ElliottLandsborough/monzo-balance" target="_blank">See the code on GitHub</a></p>
+<p><a href="https://github.com/ElliottLandsborough/tfl-charge-scanner" target="_blank">See the code on GitHub</a></p>
 </footer>

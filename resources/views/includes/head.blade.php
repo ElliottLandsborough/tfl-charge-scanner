@@ -1,5 +1,5 @@
 @php
-$title = 'Monzo TFL charge checker';
+$title = 'TFL Charge Scanner';
 $description = 'Check your bank account for London transport charges';
 @endphp
 
