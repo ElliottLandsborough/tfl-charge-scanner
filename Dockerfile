@@ -26,6 +26,7 @@ RUN npm install --production && npm run prod
 FROM php:7-fpm-alpine
 
 COPY . /var/www/html
+RUN rm /var/www/html/bootstrap/cache/*
 COPY --from=vendor /app/vendor/ /var/www/html/vendor/
 COPY --from=frontend /public/js/ /var/www/html/public/js/
 COPY --from=frontend /public/css/ /var/www/html/public/css/
