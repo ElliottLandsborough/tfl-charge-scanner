@@ -17,7 +17,7 @@ FROM node:current-alpine as frontend
 
 RUN mkdir -p ./public/css ./public/js
 
-COPY package.json package-lock.json webpack.mix.js .babelrc ./
+COPY package.json package-lock.json webpack.mix.js .babelrc .env ./
 COPY resources/ resources/
 
 RUN npm install --production && npm run prod
