@@ -5,7 +5,7 @@ namespace App\Services;
 use App;
 
 /**
- * The Starling auth class
+ * The Starling auth class.
  */
 class StarlingAuth extends AuthService
 {
