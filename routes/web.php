@@ -12,7 +12,8 @@
 */
 
 Route::get('/', 'MainController@home')->name('home');
-Route::get('/help', 'MainController@home')->name('help');
+Route::get('/help/monzo', 'MainController@home')->name('help.monzo');
+Route::get('/help/starling', 'MainController@home')->name('help.starling');
 Route::get('/logout', 'MainController@logout')->name('logout');
 Route::get('/credentials', 'MainController@credentials')->name('credentials');
 

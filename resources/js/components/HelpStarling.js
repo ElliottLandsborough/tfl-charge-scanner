@@ -1,4 +1,4 @@
-// resources/assets/js/components/Home.js
+// resources/assets/js/components/HelpStarling.js
 
 import React, {Component} from 'react'
 import { Link } from 'react-router-dom'
@@ -6,8 +6,7 @@ import { Link } from 'react-router-dom'
 /**
  * Help page for monzo api keys
  */
-class Help extends Component {
-
+class HelpStarling extends Component {
   render() {
     return (
       <div class="help-container">
@@ -31,7 +30,6 @@ class Help extends Component {
       </div>
     )
   }
-
 }
 
-export default Help;
+export default HelpStarling;

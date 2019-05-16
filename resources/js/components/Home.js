@@ -42,6 +42,7 @@ class Home extends Component {
     this.setFromZone = this.setFromZone.bind(this);
     this.setToZone = this.setToZone.bind(this);
     this.logOut = this.logOut.bind(this);
+    this.authStarlingWithUserInput = this.authStarlingWithUserInput.bind(this);
   }
 
   /**
@@ -208,7 +209,7 @@ class Home extends Component {
         html:
           '<input id="swal-input1" class="swal2-input" placeholder="Client ID">' +
           '<input id="swal-input2" class="swal2-input" placeholder="Client Secret">' +
-          '<a target="_blank" href="/help">help</a>',
+          '<a target="_blank" href="/help/monzo">help</a>',
         focusConfirm: false,
         preConfirm: () => {
           return [
@@ -251,6 +252,42 @@ class Home extends Component {
   }
 
   /**
+   * Grab the personal access key from the dialogue and use it to start the starling api process.
+   * @param  {event} e  The click event
+   */
+  authStarlingWithUserInput(e)
+  {
+    e.preventDefault();
+
+    let self = this;
+
+    (async function getFormValues () {
+      // dialogue box asking for the keys with a link to the help page
+      const {value: formValues} = await Swal.fire({
+        title: 'Personal Access Token Input',
+        html:
+          '<input id="swal-input1" class="swal2-input" placeholder="Personal Access Token">' +
+          '<a target="_blank" href="/help/starling">help</a>',
+        focusConfirm: false,
+        preConfirm: () => {
+          return [
+            document.getElementById('swal-input1').value,
+          ]
+        }
+      })
+      // did the user fill the box?
+      if (formValues[0].length) {
+        self.setState({ isAuthorized: true });
+        self.accessToken = formValues[0].trim();
+        self.currentBank = 'starling';
+        self.bank = new Starling();
+        self.bank.beginTransactionsProcess(self.accessToken);
+      }
+    })()
+
+  }
+
+  /**
    * Logs a user out of everything
    */
   logOut() {
@@ -277,7 +314,7 @@ class Home extends Component {
 
     // if starling is enabled in the env, show the starling button
     if (process.env.MIX_STARLING_ENABLE === 'true') {
-      starlingButton = <p><a className='auth-button starling' href='/auth/starling'>Authorize with Starling</a></p>;
+      starlingButton = <p><a className='auth-button starling' href='#' onClick={this.authStarlingWithUserInput}>Authorize with Starling</a></p>;
     }
 
     if (error) {

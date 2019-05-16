@@ -5,7 +5,8 @@ import ReactDOM from 'react-dom'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import Header from './Header'
 import Home from './Home'
-import Help from './Help'
+import HelpMonzo from './HelpMonzo'
+import HelpStarling from './HelpStarling'
 
 /**
  * Sleep function, mostly used for debugging purposes e.g 'await sleep(200)'
@@ -27,7 +28,8 @@ class App extends Component {
           <Header />
           <Switch>
             <Route exact path='/' component={Home} />
-            <Route exact path='/help' component={Help} />
+            <Route exact path='/help/monzo' component={HelpMonzo} />
+            <Route exact path='/help/starling' component={HelpStarling} />
           </Switch>
         </div>
       </BrowserRouter>
