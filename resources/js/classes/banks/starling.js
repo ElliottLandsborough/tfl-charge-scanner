@@ -129,7 +129,7 @@ class Starling extends Bank {
    * @return {Boolean}              True if it matches
    */
   isTflTransaction(transaction) {
-    return transaction.counterPartyName.toLowerCase().includes('mickey mouse');
+    return (transaction.spendingCategory == 'TRANSPORT' && transaction.reference.toLowerCase().includes('tfl.gov.uk'));
   }
 
   /**
